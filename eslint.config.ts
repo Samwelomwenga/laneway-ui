@@ -9,11 +9,7 @@ export default antfu({
   ignores: [
     ".agents/**",
     ".claude/**",
-    ".next/**",
     ".scratch/**",
-    "build/**",
-    "next-env.d.ts",
-    "out/**",
     "skills-lock.json",
   ],
   nextjs: true,

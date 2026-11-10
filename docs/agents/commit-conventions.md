@@ -13,7 +13,7 @@ Every commit follows [Conventional Commits](https://www.conventionalcommits.org/
 - `type` is one of the 11 types below. Required, lowercase.
 - `scope` is optional and free-form, lowercase. Name the area the change touches, such as `board`, `auth`, or `deps`. Leave it out for repo-wide changes.
 - `!` after the type or scope marks a breaking change. A `BREAKING CHANGE:` footer works too.
-- `subject` is imperative and lowercase, with no trailing period. Write "add", not "Added" or "Adds".
+- `subject` is imperative and starts lowercase, with no trailing period. Write "add", not "Added" or "Adds". commitlint rejects sentence case, start case, pascal case, and all caps. It does not catch every capital, so mixed case like "add API client" passes.
 - The header is at most 100 characters.
 - The body is optional. Use it to explain why. Wrap its lines at 100 characters or fewer, which commitlint also enforces.
 

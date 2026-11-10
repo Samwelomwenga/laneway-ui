@@ -19,7 +19,3 @@ peerDependencyRules:
     eslint-plugin-jsx-a11y>eslint: "10"
 
 shellEmulator: true
-
-ignoredBuiltDependencies:
-  - sharp
-  - unrs-resolver
