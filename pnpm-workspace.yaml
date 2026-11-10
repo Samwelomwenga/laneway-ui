@@ -12,3 +12,10 @@ minimumReleaseAgeExclude:
   - '@next/swc-win32-arm64-msvc@16.4.6'
   - '@next/swc-win32-x64-msvc@16.4.6'
   - next@16.4.6
+  - '@next/eslint-plugin-next@16.4.6'
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-jsx-a11y>eslint: "10"
+minimumReleaseAgeExcludePrune: true
+shellEmulator: true
+trustPolicy: no-downgrade
