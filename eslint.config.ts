@@ -37,7 +37,10 @@ export default antfu({
   },
   settings: importX.flatConfigs.typescript.settings,
   rules: {
-    "import-x/no-cycle": ["error", { ignoreExternal: true }],
+    "import-x/no-cycle": [
+      "error",
+      { ignoreExternal: true },
+    ],
   },
 }, {
   files: [GLOB_CODE],
@@ -57,12 +60,17 @@ export default antfu({
 }, {
   files: ["src/**"],
   rules: {
-    "no-restricted-imports": ["error", {
-      patterns: [{
-        group: ["./*", "../*"],
-        message: "Import through the @/ alias instead.",
-      }],
-    }],
+    "no-restricted-imports": [
+      "error",
+      {
+        patterns: [
+          {
+            group: ["./*", "../*"],
+            message: "Import through the @/ alias instead.",
+          },
+        ],
+      },
+    ],
   },
 }, {
   rules: {
@@ -73,14 +81,17 @@ export default antfu({
     "node/prefer-global/process": "off",
     "react-refresh/only-export-components": "off",
     "ts/consistent-type-definitions": ["error", "type"],
-    "unicorn/filename-case": ["error", {
-      case: "kebabCase",
-      ignore: [
-        "^README.*\\.md$",
-        "^AGENTS\\.md$",
-        "^CLAUDE\\.md$",
-        "^GLOSSARY\\.md$",
-      ],
-    }],
+    "unicorn/filename-case": [
+      "error",
+      {
+        case: "kebabCase",
+        ignore: [
+          "^README.*\\.md$",
+          "^AGENTS\\.md$",
+          "^CLAUDE\\.md$",
+          "^GLOSSARY\\.md$",
+        ],
+      },
+    ],
   },
 })
