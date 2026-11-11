@@ -35,10 +35,12 @@ Do not cite ticket ids, issue links, or spec sections in source comments. Ticket
 - Surprises in our own code are a design smell. Take the `MUST KILL` reshape flag and fix the code.
 - `@ts-expect-error` and `eslint-disable` need a real reason. ESLint enforces this with `eslint-comments/require-description`. A suppression over a correctness rule is a bug wearing a comment.
 
+`no-comments` owns comments. `deslop` handles defensive checks, casts, and nesting, and leaves comments alone.
+
 An agent reviewing comments here should read this file first and say it did.
 
 ## Vendored agent skills are exempt
 
-No skills are vendored yet. When they are, they live under `.agents/skills/`, installed from upstream repos and pinned by hash in `skills-lock.json`. The `.claude/skills/` entries are symlinks into it.
+Vendored skills live under `.agents/skills/`, installed from upstream repos and pinned by hash in `skills-lock.json`. The `.claude/skills/` entries are symlinks into it. The agent files in `.claude/agents/` are vendored too. They are copied by hand, and `docs/agents/skills.md` records their provenance.
 
-That code is third-party source. It is out of scope for comment review, style review, and lint, and ESLint already ignores it. Do not review it as ours and do not edit it. Any change diverges from the pinned upstream, and the next skills sync overwrites it.
+That code is third-party source. It is out of scope for comment review, style review, and lint, and ESLint already ignores it. Do not review it as ours and do not edit it. Any change diverges from the pinned upstream, and the next skills sync overwrites it. The one exception is `.agents/skills/verify-laneway-ui/`, which `create-verification-skill` generates for this repo. It is our code and gets comment review.
