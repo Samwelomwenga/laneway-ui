@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "enabledMcpjsonServers": ["next-devtools"],
+  "permissions": {
+    "allow": [
+      "Bash(pnpm lint *)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm knip *)",
+      "Bash(pnpm build *)",
+      "Bash(agent-browser *)",
+      "Bash(.agents/skills/impeccable/scripts/impeccable context *)",
+      "Bash(.agents/skills/impeccable/scripts/impeccable detect *)",
+      "mcp__next-devtools__nextjs_index",
+      "mcp__next-devtools__nextjs_docs",
+      "mcp__next-devtools__nextjs_call"
+    ]
+  }
+}
