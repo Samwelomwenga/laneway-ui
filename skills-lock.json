@@ -99,6 +99,13 @@
       "skillPath": "pstack/skills/how/SKILL.md",
       "computedHash": "1eedca26dced34439d87e9e636fe161cfeea0d3143e61983aa8567c6b99f8294"
     },
+    "impeccable": {
+      "source": "pbakaus/impeccable",
+      "ref": "035c8f319edd019936525a062fe99e83ca8d12c6",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/impeccable/SKILL.md",
+      "computedHash": "473b21f5816f4a655e0e481c70c73c02957e1cc08397066b20a69f6436bee7cf"
+    },
     "implement": {
       "source": "mattpocock/skills",
       "ref": "4ae2317ddb22b046e26455e4f9c9b3aaaf62212d",
@@ -126,6 +133,13 @@
       "sourceType": "github",
       "skillPath": "pstack/skills/maintain-verification-skill/SKILL.md",
       "computedHash": "283083c9547641392a58c38edeb147e75aa99912e7fba55edaa7b1a02021ffec"
+    },
+    "next-dev-loop": {
+      "source": "vercel/next.js",
+      "ref": "0eda7207b868b6aef91322516ad3e5a54822be6f",
+      "sourceType": "github",
+      "skillPath": "skills/next-dev-loop/SKILL.md",
+      "computedHash": "68e70a9270eb02cc9c63cb19ce5106772ce4c140242199f4d90c77f6acb56355"
     },
     "no-comments": {
       "source": "cursor/plugins",
@@ -406,6 +420,20 @@
       "sourceType": "github",
       "skillPath": "pstack/skills/unslop/SKILL.md",
       "computedHash": "eca0ad9fa3a3867c83f3aaf3a058e247a569c8976a68ca423a569b93eb86de5d"
+    },
+    "vercel-composition-patterns": {
+      "source": "vercel-labs/agent-skills",
+      "ref": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sourceType": "github",
+      "skillPath": "skills/composition-patterns/SKILL.md",
+      "computedHash": "f98931159fa9c7fed043bcd18a891a46dcf89ababa38df13a4c5b7b30dc0ce07"
+    },
+    "vercel-react-best-practices": {
+      "source": "vercel-labs/agent-skills",
+      "ref": "1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62",
+      "sourceType": "github",
+      "skillPath": "skills/react-best-practices/SKILL.md",
+      "computedHash": "3219a1944e404ffc14d1d9d6aef6dd2e3855b81387ee0a044ccbfe14d34c2357"
     },
     "wait-what": {
       "source": "mattpocock/skills",
