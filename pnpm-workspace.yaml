@@ -1,5 +1,8 @@
 minimumReleaseAge: 1440
 minimumReleaseAgeExcludePrune: true
+minimumReleaseAgeExclude:
+  - react@19.3.0
+
 trustPolicy: no-downgrade
 
 peerDependencyRules:
