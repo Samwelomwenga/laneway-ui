@@ -12,7 +12,7 @@ To fix a red run, re-run it. If the filter itself errored, check the patterns un
 
 ## `Lint`
 
-Runs `pnpm lint`, which is ESLint with `--max-warnings 0`. The config sets `formatters: true`, so lint formats code too and there is no separate format check.
+Runs `pnpm lint`, which is ESLint with `--max-warnings 0`. The config sets `formatters: true`, so lint formats code too and there is no separate format check. It includes `eslint-plugin-sonarjs` and a rule that rejects any `process.env.NEXT_PUBLIC_*` name containing `SECRET`, `TOKEN`, `PASSWORD` or `PRIVATE`, because Next inlines those values into the client bundle.
 
 To fix a red run, run `pnpm lint:fix`, fix what it leaves, and push.
 
