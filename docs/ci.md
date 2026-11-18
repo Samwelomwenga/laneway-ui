@@ -44,6 +44,26 @@ To fix a red run, run `pnpm install` on the branch, commit the changes, and push
 
 `minimumReleaseAge: 1440` makes pnpm wait a day before it installs a new package version. For an urgent advisory whose fix is younger than a day, add `<package>@<version>` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`, run `pnpm install`, and push both changes. pnpm prunes the entry once the version is old enough, and `Clean tree` then asks for that change to be committed.
 
+## `CodeQL`
+
+Runs CodeQL for `javascript-typescript` with `build-mode: none` and the `security-extended` queries, and uploads the results under the category `/language:javascript-typescript`. `main.yml` uses the same category, so PRs compare against `main`'s baseline.
+
+The job stays green when it finds something. The ruleset's code scanning rule blocks the merge instead. A red `CodeQL` job means the analysis or the upload failed.
+
+To fix a red run, read the failed step's log. A blocked host shows as a failed step. See [Runner hardening](#runner-hardening).
+
+To accept a false positive, dismiss the alert in the code scanning UI with GitHub's reason and a comment. Exclude a rule in config only when it is noisy across the repo.
+
+Keep the category string as it is. Changing it splits the baseline.
+
+## `zizmor`
+
+Runs `zizmorcore/zizmor-action` over the workflow files and fails on any finding.
+
+To fix a red run, read the annotation on the workflow line and fix what it names.
+
+To accept a false positive, add `# zizmor: ignore[<rule>] <reason>` on the line.
+
 ## `Audit`
 
 Runs `pnpm audit --audit-level high` over the whole lockfile, dev dependencies included, because dev tools run in CI with the repo token. It runs straight after pnpm setup with no install. A registry outage fails it.
@@ -89,6 +109,10 @@ To fix a red run, check that the `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` sec
 There is no `Tests` job yet. Nothing in CI notices a `test` script without one, so the PR that adds the first test also adds the job.
 
 The job runs `pnpm test` with no extra arguments. A failing test must exit non-zero, and so must a run that finds zero tests. `--passWithNoTests` and its equivalents are banned. The job skips on docs-only PRs. Add it to `CI`'s `needs`, `notify`'s `needs` and `allowed-skips`.
+
+## `main.yml`
+
+Runs on every push to `main`. `CodeQL` sets the baseline that PRs compare against, with the same category as the PR job. `Warm cache` runs `pnpm install` and `pnpm build` to save the pnpm store and `.next/cache` where PRs can read them. A failure sends a Telegram alert. No other check reruns here.
 
 ## Runner hardening
 
