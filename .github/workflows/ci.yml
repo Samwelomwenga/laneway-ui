@@ -350,7 +350,7 @@ jobs:
     needs: [changes, lint, typecheck, knip, build, clean-tree, secret-scan, codeql, zizmor, audit, dependency-review]
     if: failure() && github.event.pull_request.head.repo.fork != true
     permissions: {}
-    uses: ./.github/workflows/telegram-alert.yml
+    uses: $/.github/workflows/telegram-alert.yml
     with:
       message: Laneway UI CI failed
       needs: ${{ toJSON(needs) }}

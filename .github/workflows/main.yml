@@ -75,7 +75,7 @@ jobs:
     needs: [codeql, warm-cache]
     if: failure()
     permissions: {}
-    uses: ./.github/workflows/telegram-alert.yml
+    uses: $/.github/workflows/telegram-alert.yml
     with:
       message: Laneway UI main failed
       needs: ${{ toJSON(needs) }}
