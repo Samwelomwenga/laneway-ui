@@ -1,0 +1,4 @@
+title = "Laneway UI gitleaks config"
+
+[extend]
+useDefault = true

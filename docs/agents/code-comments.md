@@ -39,6 +39,16 @@ Do not cite ticket ids, issue links, or spec sections in source comments. Ticket
 
 An agent reviewing comments here should read this file first and say it did.
 
+## Comments the CI setup needs
+
+`/no-comments` keeps these. Each one is a convention a tool or a reviewer reads.
+
+- The `# vX.Y.Z` after every SHA-pinned `uses:` in `.github/`. Dependabot updates it with the pin, and it is the only readable version.
+- `# zizmor: ignore[<rule>] <reason>` on a workflow line. zizmor reads it.
+- The reason comment above each `[[allowlists]]` table in `.gitleaks.toml` and above `allow-dependencies-licenses` in `ci.yml`.
+- `# <reason>. Revisit YYYY-MM-DD.` above each `audit.ignore` entry in `pnpm-workspace.yaml`. A CI script reads the date once the first entry lands.
+- The removal condition on each `overrides` entry in `pnpm-workspace.yaml`.
+
 ## Vendored agent skills are exempt
 
 Vendored skills live under `.agents/skills/`, installed from upstream repos and pinned by hash in `skills-lock.json`. The `.claude/skills/` entries are symlinks into it. The agent files in `.claude/agents/` are vendored too. They are copied by hand, and `docs/agents/skills.md` records their provenance.

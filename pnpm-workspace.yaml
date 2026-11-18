@@ -1,17 +1,5 @@
+minimumReleaseAge: 1440
 minimumReleaseAgeExcludePrune: true
-minimumReleaseAgeExclude:
-  - "@next/env@16.4.6"
-  - "@next/swc-darwin-arm64@16.4.6"
-  - "@next/swc-darwin-x64@16.4.6"
-  - "@next/swc-linux-arm64-gnu@16.4.6"
-  - "@next/swc-linux-arm64-musl@16.4.6"
-  - "@next/swc-linux-x64-gnu@16.4.6"
-  - "@next/swc-linux-x64-musl@16.4.6"
-  - "@next/swc-win32-arm64-msvc@16.4.6"
-  - "@next/swc-win32-x64-msvc@16.4.6"
-  - next@16.4.6
-  - "@next/eslint-plugin-next@16.4.6"
-
 trustPolicy: no-downgrade
 
 peerDependencyRules:
@@ -19,3 +7,11 @@ peerDependencyRules:
     eslint-plugin-jsx-a11y>eslint: "10"
 
 shellEmulator: true
+
+audit:
+  ignore: []
+  ignorePrune: true
+
+overrides:
+  # tinypool 2.1.0 has two critical advisories, and oxfmt 0.35.0 pins it. Remove this once eslint-plugin-format allows oxfmt 0.68.0 or later.
+  tinypool: 2.1.2

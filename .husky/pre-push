@@ -1,1 +1,13 @@
 pnpm lint && pnpm typecheck && pnpm knip
+
+if [ -n "$(git ls-files '.env*' ':!.env.example')" ]; then
+  git ls-files '.env*' ':!.env.example'
+  echo "Remove the tracked .env files"
+  exit 1
+fi
+
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks git --config .gitleaks.toml --log-opts=origin/main..HEAD --redact
+else
+  echo "gitleaks is not installed, so the secret scan was skipped. Install it with 'brew install gitleaks' or 'dnf install gitleaks', or see \"Local hooks\" in docs/ci.md."
+fi
