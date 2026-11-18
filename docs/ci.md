@@ -1,6 +1,6 @@
 # CI
 
-Every PR to `main` runs the checks below on GitHub Actions. `ci.yml` holds them. `CI` goes green only when every other check in `ci.yml` passed or was allowed to skip.
+Every PR to `main` runs the checks below on GitHub Actions. `ci.yml` holds all of them except `PR title`, which has its own workflow because it reruns when the title changes. The ruleset requires two checks: `CI` and `PR title`. `CI` goes green only when every other check in `ci.yml` passed or was allowed to skip.
 
 Each section is headed with the check name GitHub shows on the PR.
 
@@ -33,6 +33,12 @@ To fix a red run, delete what Knip reports as unused. If Knip is wrong, add an e
 Runs `pnpm build`. It restores and saves `.next/cache`, keyed on the lockfile plus `src/**`, `next.config.*` and `tsconfig.json`. A PR saves its cache in its own `refs/pull/N/merge` scope, so it never overwrites `main`'s.
 
 To fix a red run, run `pnpm build` locally and fix the error.
+
+## `PR title`
+
+Pipes the PR title into `pnpm exec commitlint` with the repo's `commitlint.config.ts`. The squash merge uses the PR title as the commit message, so it has to pass the same rules as a commit.
+
+To fix a red run, edit the title. The check reruns on the edit, with no new push.
 
 ## `CI`
 
