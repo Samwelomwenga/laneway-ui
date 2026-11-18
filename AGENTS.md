@@ -33,3 +33,7 @@ Keep comments lean. A comment carries the why, and never a ticket id. Vendored s
 ## Commits
 
 Every commit follows Conventional Commits, and the `commit-msg` hook rejects one that doesn't. See `docs/agents/commit-conventions.md`.
+
+## CI
+
+A new job in `ci.yml` goes in `CI`'s and `notify`'s `needs`, and in `allowed-skips` if it skips on docs-only PRs. See the `CI` section of `docs/ci.md`. Renaming `CI` or `PR title` blocks every PR until the `main` ruleset changes, so follow the rename order in `docs/runbooks/repo-setup.md`.

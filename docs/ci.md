@@ -1,6 +1,6 @@
 # CI
 
-Every PR to `main` runs the checks below on GitHub Actions. `ci.yml` holds all of them except `PR title`, which has its own workflow because it reruns when the title changes. The ruleset requires two checks: `CI` and `PR title`. `CI` goes green only when every other check in `ci.yml` passed or was allowed to skip.
+Every PR to `main` runs the checks below on GitHub Actions. `ci.yml` holds all of them except `PR title`, which has its own workflow because it reruns when the title changes. The `main` ruleset requires two checks: `CI` and `PR title`. `CI` goes green only when every other check in `ci.yml` passed or was allowed to skip.
 
 Each section is headed with the check name GitHub shows on the PR.
 
