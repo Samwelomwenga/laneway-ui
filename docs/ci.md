@@ -38,11 +38,11 @@ To fix a red run, run `pnpm build` locally and fix the error.
 
 Runs `pnpm install` and `next typegen`, then fails if `git status --porcelain` prints anything, untracked files included. On failure it prints the status and diff.
 
-It exists because a frozen install deletes stale `minimumReleaseAgeExclude` entries from `pnpm-workspace.yaml` and still exits 0. Left on `main`, a stale entry is a release-age bypass.
+It exists because a frozen install deletes stale `minimumReleaseAgeExclude` entries from `pnpm-workspace.yaml` and still exits 0. An entry is stale once its version is no longer in the lockfile. Age doesn't matter. Left on `main`, a stale entry is a release-age bypass.
 
 To fix a red run, run `pnpm install` on the branch, commit the changes, and push. That includes the case where it removed a stale exclude entry.
 
-`minimumReleaseAge: 1440` makes pnpm wait a day before it installs a new package version. For an urgent advisory whose fix is younger than a day, add `<package>@<version>` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`, run `pnpm install`, and push both changes. pnpm prunes the entry once the version is old enough, and `Clean tree` then asks for that change to be committed.
+`minimumReleaseAge: 1440` makes pnpm wait a day before it installs a new package version. For an urgent advisory whose fix is younger than a day, add `<package>@<version>` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`, run `pnpm install`, and push both changes. pnpm keeps the entry while that version stays in the lockfile. When a later bump moves off it, the install prunes the entry, and `Clean tree` asks for that change to be committed.
 
 ## `Secret scan`
 
