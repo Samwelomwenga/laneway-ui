@@ -50,7 +50,7 @@ Downloads the pinned gitleaks CLI, checks its SHA-256, and runs `gitleaks git --
 
 To fix a red run, rotate the secret first. It is already on GitHub. Then rewrite the branch to drop it and force-push. For a tracked `.env` file, `git rm --cached` it.
 
-To accept a false positive, add an entry to the `[allowlist]` in `.gitleaks.toml` with a comment above it saying why it's safe. Never use an inline `gitleaks:allow`.
+To accept a false positive, add an `[[allowlists]]` table to `.gitleaks.toml` with a comment above it saying why it's safe. gitleaks refuses to load a table with no `commits`, `paths`, `regexes` or `stopwords`, so don't commit an empty one. Never use an inline `gitleaks:allow`.
 
 To bump gitleaks, change `GITLEAKS_VERSION` and `GITLEAKS_SHA256` together. The hash comes from that release's `checksums.txt` for `linux_x64`.
 
@@ -90,7 +90,7 @@ Runs `actions/dependency-review-action` on licenses only. `Audit` owns advisorie
 
 To fix a red run, replace the dependency, or confirm its license is fine and allow it.
 
-To accept a false positive, add the package's purl to `allow-dependencies-licenses` with a reason comment. The list already holds the 14 sharp libvips packages. They are LGPL, and the app neither links nor ships them.
+To accept a false positive, add the package's purl to `allow-dependencies-licenses` with a reason comment. The list already holds the 14 sharp libvips packages and the two sonarjs packages. All are LGPL. The app neither links nor ships sharp's libvips, and sonarjs only runs in ESLint.
 
 ## `PR title`
 

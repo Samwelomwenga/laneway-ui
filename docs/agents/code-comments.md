@@ -45,7 +45,7 @@ An agent reviewing comments here should read this file first and say it did.
 
 - The `# vX.Y.Z` after every SHA-pinned `uses:` in `.github/`. Dependabot updates it with the pin, and it is the only readable version.
 - `# zizmor: ignore[<rule>] <reason>` on a workflow line. zizmor reads it.
-- The reason comment above each `[allowlist]` entry in `.gitleaks.toml` and above `allow-dependencies-licenses` in `ci.yml`.
+- The reason comment above each `[[allowlists]]` table in `.gitleaks.toml` and above `allow-dependencies-licenses` in `ci.yml`.
 - `# <reason>. Revisit YYYY-MM-DD.` above each `audit.ignore` entry in `pnpm-workspace.yaml`. A CI script reads the date once the first entry lands.
 - The removal condition on each `overrides` entry in `pnpm-workspace.yaml`.
 
