@@ -16,6 +16,24 @@ Runs `pnpm lint`, which is ESLint with `--max-warnings 0`. The config sets `form
 
 To fix a red run, run `pnpm lint:fix`, fix what it leaves, and push.
 
+## `Typecheck`
+
+Runs `pnpm typecheck`, which is `next typegen` then `tsc --noEmit`.
+
+To fix a red run, run `pnpm typecheck` locally and fix the errors.
+
+## `Knip`
+
+Runs `pnpm knip` to find unused files, exports and dependencies. The `pre-push` hook runs it too, but `git push --no-verify` skips the hook, so CI runs it again.
+
+To fix a red run, delete what Knip reports as unused. If Knip is wrong, add an entry to `knip.json`.
+
+## `Build`
+
+Runs `pnpm build`. It restores and saves `.next/cache`, keyed on the lockfile plus `src/**`, `next.config.*` and `tsconfig.json`. A PR saves its cache in its own `refs/pull/N/merge` scope, so it never overwrites `main`'s.
+
+To fix a red run, run `pnpm build` locally and fix the error.
+
 ## `CI`
 
 Runs `re-actors/alls-green` over every job in `ci.yml`. It is green when every job passed, or skipped on a docs-only PR. On a code PR, a skip turns it red.
@@ -31,6 +49,12 @@ Sends a Telegram alert when a job in `ci.yml` fails on a PR from this repo. It c
 A new job in `ci.yml` goes in `notify`'s `needs` as well as `CI`'s. Without it, the job fails without an alert.
 
 To fix a red run, check that the `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` secrets are set.
+
+## Tests
+
+There is no `Tests` job yet. Nothing in CI notices a `test` script without one, so the PR that adds the first test also adds the job.
+
+The job runs `pnpm test` with no extra arguments. A failing test must exit non-zero, and so must a run that finds zero tests. `--passWithNoTests` and its equivalents are banned. The job skips on docs-only PRs. Add it to `CI`'s `needs`, `notify`'s `needs` and `allowed-skips`.
 
 ## Runner hardening
 
