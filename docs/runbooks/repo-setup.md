@@ -48,7 +48,7 @@ Settings, Advanced Security:
 2. Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` with the values from laneway-api's `ci` config, and nothing else. A sync pushes every secret in its config, so anything else added here lands in GitHub too. Its `docs/runbooks/repo-setup.md` says how the bot and chat were made.
 3. In the `ci` config, add a GitHub integration sync to `Samwelomwenga/laneway-ui`, target Actions secrets.
 4. Add a second sync from the same config, target Dependabot secrets. A Dependabot run reads only Dependabot secrets, so without this sync its failures send no alert.
-5. Check that both secrets appear under Settings, Secrets and variables, in Actions and in Dependabot.
+5. Check that both secrets appear under Settings, Secrets and variables, in Actions and in Dependabot. Doppler also adds `DOPPLER_CONFIG`, `DOPPLER_ENVIRONMENT` and `DOPPLER_PROJECT`. They hold names, not credentials, and nothing reads them.
 
 A rotated bot token goes in both Doppler projects.
 
