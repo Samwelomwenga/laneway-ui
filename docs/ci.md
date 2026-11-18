@@ -124,6 +124,14 @@ The job runs `pnpm test` with no extra arguments. A failing test must exit non-z
 
 Runs on every push to `main`. `CodeQL` sets the baseline that PRs compare against, with the same category as the PR job. `Warm cache` runs `pnpm install` and `pnpm build` to save the pnpm store and `.next/cache` where PRs can read them. A failure sends a Telegram alert. No other check reruns here.
 
+## Dependabot
+
+`.github/dependabot.yml` opens weekly update PRs on Monday for npm packages and actions, after a 7-day cooldown. It groups updates: `actions`, `next`, `react`, `tailwind`, and `dev-tooling` for the minor and patch updates of every other dev dependency. Majors outside a group get a PR each. Majors of `@types/node` and `typescript` are ignored.
+
+Nothing auto-merges. pnpm and Node upgrades stay manual.
+
+A Dependabot PR can fail `Clean tree` when its install prunes a stale exclude entry. Fix it like any other `Clean tree` failure.
+
 ## Local hooks
 
 `pre-push` runs `pnpm lint`, `pnpm typecheck` and `pnpm knip`, the tracked-`.env` check, and gitleaks over `origin/main..HEAD`. When gitleaks isn't installed it prints a warning and skips the scan. Install it with `brew install gitleaks` or `dnf install gitleaks`, or download it from https://github.com/gitleaks/gitleaks/releases.
