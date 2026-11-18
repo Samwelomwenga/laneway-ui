@@ -179,9 +179,70 @@ jobs:
             exit 1
           fi
 
+  audit:
+    name: Audit
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            registry.npmjs.org:443
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - run: pnpm audit --audit-level high
+
+  dependency-review:
+    name: Dependency review
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            api.github.com:443
+            github.com:443
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          vulnerability-check: false
+          license-check: true
+          show-openssf-scorecard: false
+          allow-licenses: >-
+            MIT, ISC, Apache-2.0, BSD-2-Clause, BSD-3-Clause, 0BSD, MPL-2.0,
+            CC0-1.0, CC-BY-3.0, CC-BY-4.0, BlueOak-1.0.0, Python-2.0, PSF-2.0
+          # These are LGPL-3.0-or-later. Next pulls in sharp's prebuilt libvips as an optional dependency, and the app neither links nor ships it.
+          allow-dependencies-licenses: >-
+            pkg:npm/%40img/sharp-libvips-darwin-arm64,
+            pkg:npm/%40img/sharp-libvips-darwin-x64,
+            pkg:npm/%40img/sharp-libvips-linux-arm,
+            pkg:npm/%40img/sharp-libvips-linux-arm64,
+            pkg:npm/%40img/sharp-libvips-linux-ppc64,
+            pkg:npm/%40img/sharp-libvips-linux-riscv64,
+            pkg:npm/%40img/sharp-libvips-linux-s390x,
+            pkg:npm/%40img/sharp-libvips-linux-x64,
+            pkg:npm/%40img/sharp-libvips-linuxmusl-arm64,
+            pkg:npm/%40img/sharp-libvips-linuxmusl-x64,
+            pkg:npm/%40img/sharp-win32-arm64,
+            pkg:npm/%40img/sharp-win32-ia32,
+            pkg:npm/%40img/sharp-win32-x64,
+            pkg:npm/%40img/sharp-wasm32
+
   ci:
     name: CI
-    needs: [changes, lint, typecheck, knip, build, clean-tree]
+    needs: [changes, lint, typecheck, knip, build, clean-tree, audit, dependency-review]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -193,10 +254,10 @@ jobs:
       - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
         with:
           jobs: ${{ toJSON(needs) }}
-          allowed-skips: ${{ needs.changes.outputs.code == 'false' && 'typecheck,knip,build,clean-tree' || '' }}
+          allowed-skips: ${{ needs.changes.outputs.code == 'false' && 'typecheck,knip,build,clean-tree,audit,dependency-review' || '' }}
 
   notify:
-    needs: [changes, lint, typecheck, knip, build, clean-tree]
+    needs: [changes, lint, typecheck, knip, build, clean-tree, audit, dependency-review]
     if: failure() && github.event.pull_request.head.repo.fork != true
     permissions: {}
     uses: ./.github/workflows/telegram-alert.yml

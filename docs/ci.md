@@ -44,6 +44,24 @@ To fix a red run, run `pnpm install` on the branch, commit the changes, and push
 
 `minimumReleaseAge: 1440` makes pnpm wait a day before it installs a new package version. For an urgent advisory whose fix is younger than a day, add `<package>@<version>` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`, run `pnpm install`, and push both changes. pnpm prunes the entry once the version is old enough, and `Clean tree` then asks for that change to be committed.
 
+## `Audit`
+
+Runs `pnpm audit --audit-level high` over the whole lockfile, dev dependencies included, because dev tools run in CI with the repo token. It runs straight after pnpm setup with no install. A registry outage fails it.
+
+To fix a red run, upgrade the package. If an upgrade can't reach a fixed version, add a pnpm `overrides` entry in `pnpm-workspace.yaml` with a comment naming its removal condition.
+
+The `tinypool: 2.1.2` override is one of these. `eslint-plugin-format` pins oxfmt 0.35.0, which pins a vulnerable `tinypool`. Remove the override once `eslint-plugin-format` allows oxfmt 0.68.0 or later.
+
+To accept a false positive, add the GHSA id to `audit.ignore` in `pnpm-workspace.yaml` by hand, with `# <reason>. Revisit YYYY-MM-DD.` above it. Never run `pnpm audit --ignore`, because it rewrites the file and deletes the comments. The PR that adds the first entry also adds a script that fails CI on a past revisit date. `audit.ignorePrune: true` drops entries whose advisory is gone.
+
+## `Dependency review`
+
+Runs `actions/dependency-review-action` on licenses only. `Audit` owns advisories. The allowed licenses are in `allow-licenses` in `ci.yml`.
+
+To fix a red run, replace the dependency, or confirm its license is fine and allow it.
+
+To accept a false positive, add the package's purl to `allow-dependencies-licenses` with a reason comment. The list already holds the 14 sharp libvips packages. They are LGPL, and the app neither links nor ships them.
+
 ## `PR title`
 
 Pipes the PR title into `pnpm exec commitlint` with the repo's `commitlint.config.ts`. The squash merge uses the PR title as the commit message, so it has to pass the same rules as a commit.
