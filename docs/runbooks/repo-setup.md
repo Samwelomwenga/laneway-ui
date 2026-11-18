@@ -1,6 +1,6 @@
 # Repo setup
 
-Branch protection and repo settings live in GitHub, not in the code. `docs/rulesets/` holds GitHub's export of both rulesets, so a ruleset change shows up as a diff in a PR. The settings and secrets below have no file, so this page is their only record. If you change one by hand, change it here too.
+Branch protection and repo settings live in GitHub, not in the code. `docs/rulesets/` holds GitHub's export of both rulesets, so a ruleset change shows up as a diff in a PR. The settings below have no file, and Doppler holds the secrets, so this page is their only record. If you change one by hand, change it here too.
 
 [docs/ci.md](../ci.md) explains each check and how to fix it when it goes red.
 
@@ -42,12 +42,15 @@ Settings, Advanced Security:
 
 ## Secrets
 
-Settings, Secrets and variables, Actions. Add two repository secrets:
+`notify / Send` reads `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. The [`notify / Send`](../ci.md#notify--send) section of the CI docs says what it does. Doppler holds both values and syncs them to GitHub, the same as laneway-api. The workflows never call Doppler.
 
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
+1. In Doppler, create a project `laneway-ui` with a `ci` config.
+2. Add `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` with the values from laneway-api's `ci` config, and nothing else. A sync pushes every secret in its config, so anything else added here lands in GitHub too. Its `docs/runbooks/repo-setup.md` says how the bot and chat were made.
+3. In the `ci` config, add a GitHub integration sync to `Samwelomwenga/laneway-ui`, target Actions secrets.
+4. Add a second sync from the same config, target Dependabot secrets. A Dependabot run reads only Dependabot secrets, so without this sync its failures send no alert.
+5. Check that both secrets appear under Settings, Secrets and variables, in Actions and in Dependabot.
 
-Use the same bot and chat as laneway-api. Its `docs/runbooks/repo-setup.md` says how to create them. `notify / Send` reads them, and the [`notify / Send`](../ci.md#notify--send) section of the CI docs says what it does. Dependabot PRs can't read Actions secrets, so their alerts log a warning and stay green.
+A rotated bot token goes in both Doppler projects.
 
 ## Rulesets
 

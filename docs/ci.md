@@ -108,11 +108,11 @@ A new job goes in three places in `ci.yml`: `CI`'s `needs`, `notify`'s `needs`, 
 
 ## `notify / Send`
 
-Sends a Telegram alert when a job in `ci.yml` fails on a PR from this repo. It calls `telegram-alert.yml`. It is never a required check. On a Dependabot PR the secrets are missing, so it logs a warning and stays green.
+Sends a Telegram alert when a job in `ci.yml` fails on a PR from this repo. It calls `telegram-alert.yml`. It is never a required check. Doppler syncs both secrets to Actions secrets and Dependabot secrets, so Dependabot PRs alert too. When a secret is missing, it logs `Telegram secrets missing, failure alert not sent` as a warning and stays green.
 
 A new job in `ci.yml` goes in `notify`'s `needs` as well as `CI`'s. Without it, the job fails without an alert.
 
-To fix a red run, check that the `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` secrets are set.
+To fix a red run, or a missing-secrets warning, check the Doppler syncs for `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. The [Secrets](runbooks/repo-setup.md#secrets) section of the repo-setup runbook has the steps.
 
 ## Tests
 
