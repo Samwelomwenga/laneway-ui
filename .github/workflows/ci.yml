@@ -146,9 +146,42 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
       - run: pnpm build
 
+  clean-tree:
+    name: Clean tree
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            registry.npmjs.org:443
+            nodejs.org:443
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+        with:
+          cache: true
+      - run: pnpm install
+      - run: pnpm exec next typegen
+      - name: Fail on a dirty tree
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git status --porcelain
+            git diff
+            echo "::error::Run pnpm install and commit the changes"
+            exit 1
+          fi
+
   ci:
     name: CI
-    needs: [changes, lint, typecheck, knip, build]
+    needs: [changes, lint, typecheck, knip, build, clean-tree]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -160,10 +193,10 @@ jobs:
       - uses: re-actors/alls-green@b5b5b37504aa4183270bd3d855c52a67f212be35 # v1.3.0
         with:
           jobs: ${{ toJSON(needs) }}
-          allowed-skips: ${{ needs.changes.outputs.code == 'false' && 'typecheck,knip,build' || '' }}
+          allowed-skips: ${{ needs.changes.outputs.code == 'false' && 'typecheck,knip,build,clean-tree' || '' }}
 
   notify:
-    needs: [changes, lint, typecheck, knip, build]
+    needs: [changes, lint, typecheck, knip, build, clean-tree]
     if: failure() && github.event.pull_request.head.repo.fork != true
     permissions: {}
     uses: ./.github/workflows/telegram-alert.yml
