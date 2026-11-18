@@ -179,6 +179,44 @@ jobs:
             exit 1
           fi
 
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    env:
+      GITLEAKS_VERSION: 8.30.1
+      GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+    steps:
+      - uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        with:
+          egress-policy: block
+          allowed-endpoints: >
+            github.com:443
+            release-assets.githubusercontent.com:443
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Install gitleaks
+        run: |
+          tarball="gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          curl --silent --show-error --fail --location --output "$RUNNER_TEMP/$tarball" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/$tarball"
+          echo "$GITLEAKS_SHA256  $RUNNER_TEMP/$tarball" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/$tarball" -C "$RUNNER_TEMP" gitleaks
+      - name: Gitleaks
+        run: |
+          "$RUNNER_TEMP/gitleaks" git --config .gitleaks.toml --log-opts=origin/main..HEAD --redact
+      - name: Tracked .env files
+        run: |
+          if [[ -n "$(git ls-files '.env*' ':!.env.example')" ]]; then
+            git ls-files '.env*' ':!.env.example'
+            echo "::error::Remove the tracked .env files"
+            exit 1
+          fi
+
   codeql:
     name: CodeQL
     runs-on: ubuntu-latest
@@ -291,7 +329,7 @@ jobs:
 
   ci:
     name: CI
-    needs: [changes, lint, typecheck, knip, build, clean-tree, codeql, zizmor, audit, dependency-review]
+    needs: [changes, lint, typecheck, knip, build, clean-tree, secret-scan, codeql, zizmor, audit, dependency-review]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -306,7 +344,7 @@ jobs:
           allowed-skips: ${{ needs.changes.outputs.code == 'false' && 'typecheck,knip,build,clean-tree,audit,dependency-review' || '' }}
 
   notify:
-    needs: [changes, lint, typecheck, knip, build, clean-tree, codeql, zizmor, audit, dependency-review]
+    needs: [changes, lint, typecheck, knip, build, clean-tree, secret-scan, codeql, zizmor, audit, dependency-review]
     if: failure() && github.event.pull_request.head.repo.fork != true
     permissions: {}
     uses: ./.github/workflows/telegram-alert.yml

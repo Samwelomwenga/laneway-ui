@@ -1,0 +1,9 @@
+title = "Laneway UI gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Files and values that are safe to commit"
+paths = []
+regexes = []

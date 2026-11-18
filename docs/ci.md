@@ -44,6 +44,16 @@ To fix a red run, run `pnpm install` on the branch, commit the changes, and push
 
 `minimumReleaseAge: 1440` makes pnpm wait a day before it installs a new package version. For an urgent advisory whose fix is younger than a day, add `<package>@<version>` to `minimumReleaseAgeExclude` in `pnpm-workspace.yaml`, run `pnpm install`, and push both changes. pnpm prunes the entry once the version is old enough, and `Clean tree` then asks for that change to be committed.
 
+## `Secret scan`
+
+Downloads the pinned gitleaks CLI, checks its SHA-256, and runs `gitleaks git --log-opts=origin/main..HEAD` with `.gitleaks.toml`. That covers every commit on the PR. A second step fails if any `.env*` file other than `.env.example` is tracked.
+
+To fix a red run, rotate the secret first. It is already on GitHub. Then rewrite the branch to drop it and force-push. For a tracked `.env` file, `git rm --cached` it.
+
+To accept a false positive, add an entry to the `[allowlist]` in `.gitleaks.toml` with a comment above it saying why it's safe. Never use an inline `gitleaks:allow`.
+
+To bump gitleaks, change `GITLEAKS_VERSION` and `GITLEAKS_SHA256` together. The hash comes from that release's `checksums.txt` for `linux_x64`.
+
 ## `CodeQL`
 
 Runs CodeQL for `javascript-typescript` with `build-mode: none` and the `security-extended` queries, and uploads the results under the category `/language:javascript-typescript`. `main.yml` uses the same category, so PRs compare against `main`'s baseline.
@@ -113,6 +123,18 @@ The job runs `pnpm test` with no extra arguments. A failing test must exit non-z
 ## `main.yml`
 
 Runs on every push to `main`. `CodeQL` sets the baseline that PRs compare against, with the same category as the PR job. `Warm cache` runs `pnpm install` and `pnpm build` to save the pnpm store and `.next/cache` where PRs can read them. A failure sends a Telegram alert. No other check reruns here.
+
+## Local hooks
+
+`pre-push` runs `pnpm lint`, `pnpm typecheck` and `pnpm knip`, the tracked-`.env` check, and gitleaks over `origin/main..HEAD`. When gitleaks isn't installed it prints a warning and skips the scan. Install it with `brew install gitleaks` or `dnf install gitleaks`, or download it from https://github.com/gitleaks/gitleaks/releases.
+
+| Check                                                                   | Local                    | CI                             |
+| ----------------------------------------------------------------------- | ------------------------ | ------------------------------ |
+| `Lint`, `Typecheck`, `Knip`                                             | `pre-push`               | yes                            |
+| Tracked `.env` files                                                    | `pre-push`               | `Secret scan`                  |
+| gitleaks                                                                | `pre-push`, if installed | `Secret scan`                  |
+| Commit message                                                          | `commit-msg`             | `PR title` checks the PR title |
+| `Build`, `Clean tree`, `CodeQL`, `zizmor`, `Audit`, `Dependency review` | no                       | yes                            |
 
 ## Runner hardening
 
