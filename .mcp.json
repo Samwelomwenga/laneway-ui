@@ -6,6 +6,10 @@
       "env": {
         "NEXT_TELEMETRY_DISABLED": "1"
       }
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["-y", "shadcn@4.23.0", "mcp"]
     }
   }
 }
