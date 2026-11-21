@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Add01Icon, Delete02Icon, MoreHorizontalIcon, Share08Icon } from "@hugeicons/core-free-icons"
 import { Icon } from "@/components/icon"
 import { ModeToggle } from "@/components/mode-toggle"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -94,6 +95,7 @@ export default function SpecimenPage() {
       <Colors />
       <Shadows />
       <Buttons />
+      <Chips />
       <Fields />
     </main>
   )
@@ -185,6 +187,18 @@ function Buttons() {
           <Icon icon={Delete02Icon} />
           <span className="sr-only">Archive</span>
         </Button>
+      </div>
+    </Section>
+  )
+}
+
+function Chips() {
+  return (
+    <Section title="Chips">
+      <div className="flex flex-wrap items-center gap-3">
+        <Badge>+2</Badge>
+        <Badge>3 of 12</Badge>
+        <Badge variant="outline" title="Not a member of this workspace">Guest</Badge>
       </div>
     </Section>
   )

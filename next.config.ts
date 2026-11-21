@@ -1,4 +1,5 @@
 import type { NextConfig } from "next"
+import { withCn } from "cn/next"
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -14,4 +15,8 @@ const nextConfig: NextConfig = {
   },
 }
 
-export default nextConfig
+export default withCn(nextConfig, {
+  css: "src/app/globals.css",
+  full: true,
+  out: "src/lib/cn-tables.ts",
+})

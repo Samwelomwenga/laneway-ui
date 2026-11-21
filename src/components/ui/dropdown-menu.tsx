@@ -49,7 +49,7 @@ function DropdownMenuItem({ className, ...props }: Readonly<MenuPrimitive.Item.P
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
       className={cn(
-        "relative flex min-h-control-sm cursor-default items-center gap-1.5 rounded-[calc(var(--radius-popover)-0.375rem)] px-2.5 py-1 text-sm outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "relative flex min-h-control-sm cursor-default items-center gap-1.5 rounded-[calc(var(--radius-popover)-0.375rem)] px-2.5 py-1 text-card-title outline-hidden select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       {...props}

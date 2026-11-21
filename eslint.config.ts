@@ -38,6 +38,7 @@ export default antfu({
     ".claude/**",
     ".scratch/**",
     "skills-lock.json",
+    "src/lib/cn-tables.ts",
   ],
   nextjs: true,
   react: true,

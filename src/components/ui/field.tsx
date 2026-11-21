@@ -52,7 +52,7 @@ function FieldLabel({ className, ...props }: Readonly<React.ComponentProps<typeo
     <Label
       data-slot="field-label"
       className={cn(
-        "flex w-fit gap-2 leading-snug group-data-[disabled=true]/field:opacity-50",
+        "flex w-fit gap-2 group-data-[disabled=true]/field:opacity-50",
         className,
       )}
       {...props}
