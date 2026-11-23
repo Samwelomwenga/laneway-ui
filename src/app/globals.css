@@ -48,6 +48,8 @@
   --color-label-strong: var(--label-strong);
   --color-label-ring: var(--label-ring);
   --color-label-list: var(--label-list);
+  --color-avatar-disc: var(--avatar-disc);
+  --color-avatar-initials: var(--avatar-initials);
 
   --radius-chip: 999px;
   --radius-control: 0.75rem;
@@ -376,6 +378,46 @@
   --label-tint: oklch(0.4 0.1 124);
   --label-text: oklch(0.93 0.05 124);
   --label-strong: oklch(0.72 0.14 124);
+}
+
+[data-avatar="1"] {
+  --avatar-disc: oklch(0.9 0.03 112);
+  --avatar-initials: oklch(0.3 0.04 112);
+}
+
+[data-avatar="2"] {
+  --avatar-disc: oklch(0.82 0.05 118);
+  --avatar-initials: oklch(0.25 0.04 118);
+}
+
+[data-avatar="3"] {
+  --avatar-disc: oklch(0.46 0.05 110);
+  --avatar-initials: oklch(0.98 0.01 110);
+}
+
+[data-avatar="4"] {
+  --avatar-disc: oklch(0.32 0.035 105);
+  --avatar-initials: oklch(0.95 0.02 115);
+}
+
+.dark [data-avatar="1"] {
+  --avatar-disc: oklch(0.36 0.035 112);
+  --avatar-initials: oklch(0.94 0.02 112);
+}
+
+.dark [data-avatar="2"] {
+  --avatar-disc: oklch(0.46 0.05 118);
+  --avatar-initials: oklch(0.98 0.01 118);
+}
+
+.dark [data-avatar="3"] {
+  --avatar-disc: oklch(0.78 0.05 110);
+  --avatar-initials: oklch(0.22 0.03 110);
+}
+
+.dark [data-avatar="4"] {
+  --avatar-disc: oklch(0.9 0.03 105);
+  --avatar-initials: oklch(0.25 0.03 105);
 }
 
 @layer base {

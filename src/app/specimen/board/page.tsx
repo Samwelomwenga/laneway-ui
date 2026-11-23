@@ -1,7 +1,15 @@
 import type { Metadata } from "next"
-import { FIXTURE_LABELS, FIXTURE_LISTS } from "@/app/specimen/board/fixture"
-import { Board } from "@/components/board/board"
-import { ModeToggle } from "@/components/mode-toggle"
+import {
+  FIXTURE_BOARD_ID,
+  FIXTURE_BOARDS,
+  FIXTURE_LABELS,
+  FIXTURE_LISTS,
+  FIXTURE_MEMBERS,
+  FIXTURE_VIEWER_ID,
+} from "@/app/specimen/board/fixture"
+import { AppSidebar } from "@/components/app-shell/app-sidebar"
+import { BoardScreen } from "@/components/board/board-screen"
+import { SidebarProvider } from "@/components/ui/sidebar"
 
 export const metadata: Metadata = {
   title: "Fixture board · Laneway",
@@ -9,12 +17,16 @@ export const metadata: Metadata = {
 
 export default function FixtureBoardPage() {
   return (
-    <main className="flex h-dvh flex-col">
-      <header className="flex items-center justify-between gap-4 px-list-gap py-3">
-        <h1 className="text-title">Fixture board</h1>
-        <ModeToggle />
-      </header>
-      <Board initialLists={FIXTURE_LISTS} labels={FIXTURE_LABELS} />
-    </main>
+    <SidebarProvider>
+      <AppSidebar boards={FIXTURE_BOARDS} currentBoardId={FIXTURE_BOARD_ID} />
+      <BoardScreen
+        name="Fixture board"
+        lists={FIXTURE_LISTS}
+        labels={FIXTURE_LABELS}
+        initialMembers={FIXTURE_MEMBERS}
+        viewerId={FIXTURE_VIEWER_ID}
+        addMembers="admins"
+      />
+    </SidebarProvider>
   )
 }

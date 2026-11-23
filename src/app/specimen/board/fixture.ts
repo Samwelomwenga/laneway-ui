@@ -1,5 +1,7 @@
+import type { SidebarBoard } from "@/components/app-shell/app-sidebar"
 import type { BoardCardData, BoardListData } from "@/components/board/board-types"
 import type { BoardLabel } from "@/components/label-chip"
+import type { BoardMember } from "@/lib/members"
 import { withCheckItems } from "@/lib/card-fields"
 
 const LABELS = {
@@ -121,5 +123,56 @@ export const FIXTURE_LISTS: BoardListData[] = [
         labels: [LABELS.design],
       },
     ],
+  },
+]
+
+export const FIXTURE_BOARD_ID = "board-fixture"
+
+export const FIXTURE_BOARDS: SidebarBoard[] = [
+  { id: FIXTURE_BOARD_ID, name: "Fixture board", href: "/specimen/board" },
+  { id: "board-launch", name: "Launch plan", href: "/specimen/board" },
+  { id: "board-research", name: "User research", href: "/specimen/board" },
+]
+
+export const FIXTURE_VIEWER_ID = "user-amara"
+
+export const FIXTURE_MEMBERS: BoardMember[] = [
+  {
+    id: FIXTURE_VIEWER_ID,
+    fullName: "Amara Okafor",
+    username: "amara",
+    role: "admin",
+  },
+  {
+    id: "user-jonas",
+    fullName: "Jonas Berg",
+    username: "jonas",
+    role: "normal",
+  },
+  {
+    id: "user-priya",
+    fullName: "Priya Natarajan",
+    username: "priya",
+    role: "normal",
+  },
+  {
+    id: "user-leo",
+    fullName: "Leo Martins",
+    username: "leom",
+    role: "normal",
+    guest: true,
+  },
+  {
+    id: "user-mei",
+    fullName: "Mei Tanaka",
+    username: "mei",
+    role: "observer",
+  },
+  {
+    id: "user-tomas",
+    fullName: "Tomás Rivera",
+    username: "tomas",
+    role: "observer",
+    guest: true,
   },
 ]

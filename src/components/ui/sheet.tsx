@@ -7,7 +7,19 @@ function Sheet(props: Readonly<SheetPrimitive.Root.Props>) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
-function SheetContent({ className, ...props }: Readonly<SheetPrimitive.Popup.Props>) {
+const SIDES = {
+  bottom: [
+    "inset-x-0 bottom-0 max-h-[85dvh] gap-form-gap rounded-t-popover bg-popover p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-popover-foreground shadow-dialog",
+    "duration-(--duration-fast) data-starting-style:translate-y-6",
+  ],
+  left: [
+    "inset-y-0 start-0 h-dvh",
+    "duration-(--duration-base) data-ending-style:-translate-x-full data-starting-style:-translate-x-full motion-reduce:duration-(--duration-fast) motion-reduce:data-ending-style:translate-x-0",
+  ],
+} as const
+
+function SheetContent({ className, side = "bottom", ...props }: Readonly<SheetPrimitive.Popup.Props & { side?: keyof typeof SIDES }>) {
+  const [place, motion] = SIDES[side]
   return (
     <SheetPrimitive.Portal>
       <SheetPrimitive.Backdrop
@@ -17,8 +29,10 @@ function SheetContent({ className, ...props }: Readonly<SheetPrimitive.Popup.Pro
       <SheetPrimitive.Popup
         data-slot="sheet-content"
         className={cn(
-          "fixed inset-x-0 bottom-0 z-50 flex max-h-[85dvh] flex-col gap-form-gap overflow-y-auto rounded-t-popover bg-popover p-4 pb-[max(1rem,env(safe-area-inset-bottom))] text-popover-foreground shadow-dialog outline-none",
-          "transition-[opacity,translate] duration-(--duration-fast) ease-enter data-ending-style:opacity-0 data-ending-style:ease-exit data-starting-style:translate-y-6 data-starting-style:opacity-0 motion-reduce:data-starting-style:translate-y-0",
+          "fixed z-50 flex flex-col overflow-y-auto outline-none",
+          place,
+          "transition-[opacity,translate] ease-enter data-ending-style:opacity-0 data-ending-style:ease-exit data-starting-style:opacity-0 motion-reduce:data-starting-style:translate-0",
+          motion,
           className,
         )}
         {...props}
