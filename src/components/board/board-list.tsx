@@ -11,7 +11,7 @@ import { KanbanColumn, KanbanColumnContent, KanbanColumnHandle } from "@/compone
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
-const LIST_SURFACE = "flex max-h-full w-list-w shrink-0 flex-col gap-card-gap rounded-list p-list-pad"
+const LIST_SURFACE = "flex max-h-full w-list-w shrink-0 flex-col gap-card-gap rounded-list p-list-pad max-sm:w-list-w-phone max-sm:snap-start"
 
 export function BoardList({
   list,
@@ -34,6 +34,7 @@ export function BoardList({
       value={list.id}
       data-color={list.color}
       aria-labelledby={headingId}
+      data-board-slot
       render={<section />}
       className={cn(
         LIST_SURFACE,
@@ -46,7 +47,7 @@ export function BoardList({
       <KanbanColumnContent
         ref={scrollerRef}
         value={list.id}
-        className="-m-1 min-h-0 scroll-py-1 overflow-y-auto p-1"
+        className="relative -m-1 min-h-0 scroll-py-1 overflow-y-auto p-1"
       >
         {cards.map(card => (
           <BoardCard key={card.id} card={card} onOpen={onOpenCard} onMove={onMoveCard} />
@@ -88,19 +89,22 @@ function ListHeader({
   headingId?: string
   grip?: React.ReactNode
 }>) {
-  const cardCount = `${count} ${count === 1
-    ? "card"
-    : "cards"}`
   return (
     <header className="flex min-h-control items-center gap-2 rounded-card ps-2 pe-1 text-foreground group-focus-within/list:bg-primary group-focus-within/list:text-primary-foreground">
       <h2 id={headingId} className="min-w-0 flex-1 truncate text-heading">
         {list.name}
-        <span className="sr-only">{`, ${cardCount}`}</span>
+        <span className="sr-only">{`, ${cardCount(count)}`}</span>
       </h2>
       <span aria-hidden className="text-meta text-muted-foreground group-focus-within/list:text-primary-foreground">{count}</span>
       {grip}
     </header>
   )
+}
+
+export function cardCount(count: number) {
+  return `${count} ${count === 1
+    ? "card"
+    : "cards"}`
 }
 
 function ListGrip({ listName }: Readonly<{ listName: string }>) {
@@ -171,7 +175,7 @@ export function AddList({ onAdd }: Readonly<{ onAdd: (name: string) => void }>) 
 
   if (composing) {
     return (
-      <div className={cn(LIST_SURFACE, "self-start bg-list")}>
+      <div data-board-slot className={cn(LIST_SURFACE, "self-start bg-list")}>
         <InlineComposer
           label="New list name"
           placeholder="Enter a list name"
@@ -186,6 +190,7 @@ export function AddList({ onAdd }: Readonly<{ onAdd: (name: string) => void }>) 
   return (
     <Button
       ref={triggerRef}
+      data-board-slot
       variant="ghost"
       className={cn(LIST_SURFACE, "h-auto min-h-[calc(var(--size-control)+var(--spacing-list-pad)*2)] flex-row items-center justify-start self-start px-4 text-muted-foreground outline-offset-0 hover:text-accent-foreground")}
       onClick={open}

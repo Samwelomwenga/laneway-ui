@@ -149,12 +149,16 @@ export function playMove(root: HTMLElement, before: CardSnapshot, movedId: strin
     return
   card.scrollIntoView({ block: "nearest", inline: "nearest" })
   const from = before.get(movedId)?.rect
-  if (!from || matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  if (!from || prefersReducedMotion()) {
     wash(card)
     return
   }
   closeGaps(root, before, movedId)
   flyGhostOverListScrollers(card, from, () => wash(card))
+}
+
+export function prefersReducedMotion() {
+  return matchMedia("(prefers-reduced-motion: reduce)").matches
 }
 
 export function focusCardMenu(root: HTMLElement, cardId: string) {

@@ -9,8 +9,9 @@ import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { useLayoutEffect, useRef, useState } from "react"
 import { AddList, BoardList, BoardListOverlay } from "@/components/board/board-list"
+import { ListStrip } from "@/components/board/list-strip"
 import { MoveCardPanel } from "@/components/board/move-card-panel"
-import { focusCardMenu, milliseconds, playMove, snapshotCards } from "@/components/board/move-motion"
+import { focusCardMenu, milliseconds, playMove, prefersReducedMotion, snapshotCards } from "@/components/board/move-motion"
 import { CardFace } from "@/components/card-face"
 import { Kanban, KanbanBoard, KanbanOverlay } from "@/components/reui/kanban"
 import { useToastManager } from "@/components/ui/toast"
@@ -42,6 +43,8 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   const pendingMoveRef = useRef<MoveDestination>(undefined)
   const originRef = useRef<Placement>(undefined)
   const boardRef = useRef<HTMLDivElement>(null)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const [currentSlot, setCurrentSlot] = useState(0)
   const toastManager = useToastManager()
   const motionRef = useRef<{ before: CardSnapshot, id: string }>(undefined)
 
@@ -200,11 +203,45 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
     setCardsByList(current => ({ ...current, [id]: [] }))
   }
 
+  function trackCurrentSlot() {
+    if (scrollerRef.current)
+      setCurrentSlot(slotInView(scrollerRef.current))
+  }
+
+  function jumpToSlot(slot: number) {
+    const scroller = scrollerRef.current
+    const target = scroller?.querySelectorAll<HTMLElement>("[data-board-slot]")[slot]
+    if (!scroller || !target)
+      return
+    scroller.scrollTo({
+      left: slotScrollLeft(scroller, target),
+      behavior: prefersReducedMotion()
+        ? "instant"
+        : "smooth",
+    })
+    const focusable = target.matches("button")
+      ? target
+      : target.querySelector<HTMLElement>("input, button")
+    focusable?.focus({ preventScroll: true })
+  }
+
   return (
-    <div ref={boardRef} className="flex min-h-0 flex-1 flex-col">
+    <div
+      ref={boardRef}
+      className="flex min-h-0 flex-1 flex-col [--strip-h:calc(var(--size-control)+1rem)] max-sm:@container max-sm:scroll-pt-(--strip-h) max-sm:overflow-y-auto"
+    >
       <p role="status" className="min-h-5 px-list-gap text-meta text-muted-foreground">
         {status}
       </p>
+      <ListStrip
+        lists={Object.entries(cardsByList).map(([id, cards]) => ({
+          id,
+          name: listName(id),
+          count: cards.length,
+        }))}
+        current={Math.min(currentSlot, Object.keys(cardsByList).length)}
+        onJump={jumpToSlot}
+      />
       <Kanban
         value={cardsByList}
         onValueChange={setCardsByList}
@@ -212,9 +249,13 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
         restoreOnCancel
         onDragStart={handleDragStart}
         accessibility={{ announcements, screenReaderInstructions: SCREEN_READER_INSTRUCTIONS }}
-        className="flex min-h-0 flex-1 flex-col"
+        className="group/kanban flex min-h-0 flex-1 flex-col"
       >
-        <KanbanBoard className="flex min-h-0 flex-1 scroll-px-list-gap items-start gap-list-gap overflow-x-auto px-list-gap pt-2 pb-list-gap">
+        <KanbanBoard
+          ref={scrollerRef}
+          onScroll={trackCurrentSlot}
+          className="relative flex min-h-0 flex-1 scroll-px-list-gap items-start gap-list-gap overflow-x-auto px-list-gap pt-2 pb-list-gap max-sm:min-h-80 max-sm:snap-x max-sm:snap-mandatory max-sm:pe-[calc(var(--spacing-list-gap)+2rem)] max-sm:group-data-[dragging=true]/kanban:snap-none"
+        >
           {Object.entries(cardsByList).map(([listId, cards]) => (
             <BoardList
               key={listId}
@@ -261,6 +302,27 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   )
 }
 
+function slotScrollLeft(scroller: HTMLElement, slot: HTMLElement) {
+  const offset = slot.getBoundingClientRect().left - scroller.getBoundingClientRect().left
+  return scroller.scrollLeft + offset - Number.parseFloat(getComputedStyle(scroller).scrollPaddingLeft)
+}
+
+function slotInView(scroller: HTMLElement) {
+  const slots = [
+    ...scroller.querySelectorAll<HTMLElement>("[data-board-slot]"),
+  ]
+  let nearest = 0
+  let nearestDistance = Infinity
+  for (const [index, slot] of slots.entries()) {
+    const distance = Math.abs(slotScrollLeft(scroller, slot) - scroller.scrollLeft)
+    if (distance < nearestDistance) {
+      nearest = index
+      nearestDistance = distance
+    }
+  }
+  return nearest
+}
+
 function listMeta(lists: Record<string, BoardListMeta>, id: string) {
   const meta = lists[id]
   if (!meta)
@@ -297,7 +359,7 @@ const cardDropKeyframes: DropAnimationKeyframeResolver = ({ transform }) => [
 ]
 
 function readDropAnimation(kind: DragKind): DropAnimation | null {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches)
+  if (prefersReducedMotion())
     return null
   return {
     duration: milliseconds(cssVar("--duration-base")),
