@@ -43,6 +43,11 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-label-tint: var(--label-tint);
+  --color-label-text: var(--label-text);
+  --color-label-strong: var(--label-strong);
+  --color-label-ring: var(--label-ring);
+  --color-label-list: var(--label-list);
 
   --radius-chip: 999px;
   --radius-control: 0.75rem;
@@ -209,6 +214,150 @@
   --shadow-lift: 0 16px 32px -6px oklch(0 0 0 / 0.7), 0 4px 8px oklch(0 0 0 / 0.4);
   --shadow-popover: 0 12px 32px oklch(0 0 0 / 0.55), 0 0 0 1px var(--border);
   --shadow-dialog: 0 24px 64px oklch(0 0 0 / 0.65), 0 0 0 1px var(--border);
+}
+
+[data-color] {
+  --label-ring: transparent;
+  --label-list: color-mix(in oklch, var(--label-tint) 65%, var(--list));
+}
+
+[data-color="yellow"] {
+  --label-hue: 100;
+  --label-tint: oklch(0.94 0.1 100);
+  --label-text: oklch(0.42 0.085 95);
+  --label-strong: oklch(0.88 0.17 100);
+  --label-ring: oklch(0.58 0.115 95);
+}
+
+[data-color="purple"] {
+  --label-hue: 305;
+  --label-tint: oklch(0.91 0.05 305);
+  --label-text: oklch(0.4 0.11 305);
+  --label-strong: oklch(0.6 0.15 305);
+}
+
+[data-color="blue"] {
+  --label-hue: 255;
+  --label-tint: oklch(0.91 0.04 255);
+  --label-text: oklch(0.4 0.11 255);
+  --label-strong: oklch(0.6 0.15 255);
+}
+
+[data-color="red"] {
+  --label-hue: 25;
+  --label-tint: oklch(0.91 0.045 25);
+  --label-text: oklch(0.4 0.11 25);
+  --label-strong: oklch(0.6 0.15 25);
+}
+
+[data-color="green"] {
+  --label-hue: 150;
+  --label-tint: oklch(0.91 0.07 150);
+  --label-text: oklch(0.4 0.11 150);
+  --label-strong: oklch(0.6 0.15 150);
+}
+
+[data-color="orange"] {
+  --label-hue: 55;
+  --label-tint: oklch(0.91 0.05 55);
+  --label-text: oklch(0.4 0.1 55);
+  --label-strong: oklch(0.6 0.145 55);
+}
+
+[data-color="black"] {
+  --label-hue: 110;
+  --label-tint: oklch(0.27 0.01 110);
+  --label-text: oklch(0.97 0.004 105);
+  --label-strong: oklch(0.27 0.01 110);
+  --label-list: color-mix(in oklch, var(--label-tint) 6%, var(--list));
+}
+
+[data-color="sky"] {
+  --label-hue: 225;
+  --label-tint: oklch(0.91 0.055 225);
+  --label-text: oklch(0.4 0.075 225);
+  --label-strong: oklch(0.6 0.11 225);
+}
+
+[data-color="pink"] {
+  --label-hue: 350;
+  --label-tint: oklch(0.91 0.055 350);
+  --label-text: oklch(0.4 0.11 350);
+  --label-strong: oklch(0.6 0.15 350);
+}
+
+[data-color="lime"] {
+  --label-hue: 124;
+  --label-tint: oklch(0.91 0.13 124);
+  --label-text: oklch(0.4 0.1 124);
+  --label-strong: oklch(0.6 0.145 124);
+}
+
+.dark [data-color] {
+  --label-ring: transparent;
+  --label-list: oklch(0.2 0.035 var(--label-hue));
+}
+
+.dark [data-color="yellow"] {
+  --label-tint: oklch(0.4 0.08 100);
+  --label-text: oklch(0.93 0.05 100);
+  --label-strong: oklch(0.88 0.17 100);
+}
+
+.dark [data-color="purple"] {
+  --label-tint: oklch(0.4 0.11 305);
+  --label-text: oklch(0.93 0.04 305);
+  --label-strong: oklch(0.72 0.14 305);
+}
+
+.dark [data-color="blue"] {
+  --label-tint: oklch(0.4 0.11 255);
+  --label-text: oklch(0.93 0.03 255);
+  --label-strong: oklch(0.72 0.14 255);
+}
+
+.dark [data-color="red"] {
+  --label-tint: oklch(0.4 0.11 25);
+  --label-text: oklch(0.93 0.035 25);
+  --label-strong: oklch(0.72 0.14 25);
+}
+
+.dark [data-color="green"] {
+  --label-tint: oklch(0.4 0.11 150);
+  --label-text: oklch(0.93 0.05 150);
+  --label-strong: oklch(0.72 0.14 150);
+}
+
+.dark [data-color="orange"] {
+  --label-tint: oklch(0.4 0.1 55);
+  --label-text: oklch(0.93 0.04 55);
+  --label-strong: oklch(0.72 0.14 55);
+}
+
+.dark [data-color="black"] {
+  --label-tint: oklch(0.14 0.006 110);
+  --label-text: oklch(0.93 0.008 105);
+  --label-strong: oklch(0.14 0.006 110);
+  --label-ring: oklch(0.6 0.01 110);
+  --label-list: var(--list);
+}
+
+.dark [data-color="sky"] {
+  --label-tint: oklch(0.4 0.075 225);
+  --label-text: oklch(0.93 0.045 225);
+  --label-strong: oklch(0.72 0.135 225);
+}
+
+.dark [data-color="pink"] {
+  --label-tint: oklch(0.4 0.11 350);
+  --label-text: oklch(0.93 0.04 350);
+  --label-strong: oklch(0.72 0.14 350);
+}
+
+.dark [data-color="lime"] {
+  --label-tint: oklch(0.4 0.1 124);
+  --label-text: oklch(0.93 0.05 124);
+  --label-strong: oklch(0.72 0.14 124);
 }
 
 @layer base {

@@ -1,12 +1,16 @@
 import type { Metadata } from "next"
+import type { CardFaceData } from "@/components/card-face"
 import { Add01Icon, Delete02Icon, MoreHorizontalIcon, Share08Icon } from "@hugeicons/core-free-icons"
+import { CardFace } from "@/components/card-face"
 import { Icon } from "@/components/icon"
+import { LabelChip } from "@/components/label-chip"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { LABEL_COLOR_KEYS, LABEL_COLOR_NAMES } from "@/lib/label-colors"
 
 export const metadata: Metadata = {
   title: "Specimen · Laneway",
@@ -84,6 +88,55 @@ const SHADOWS = [
   { name: "dialog", className: "shadow-dialog" },
 ] as const
 
+const FIXTURE_CARDS: CardFaceData[] = [
+  { title: "Fix the login redirect loop" },
+  {
+    title: "Write the onboarding copy",
+    labels: [
+      { id: "label-1", name: "Copy", color: "purple" },
+      { id: "label-2", name: "Onboarding", color: "lime" },
+    ],
+    due: { date: "2026-11-18", overdue: true },
+    comments: 4,
+  },
+  {
+    title: "Ship the dark theme",
+    cover: { kind: "color", color: "yellow" },
+    labels: [
+      { id: "label-3", color: "yellow" },
+      { id: "label-4", color: "black" },
+      { id: "label-5", color: "sky" },
+    ],
+    due: { date: "2026-11-12", complete: true },
+    checklist: { checked: 12, total: 12 },
+  },
+  {
+    title: "Pick a cover photo for the launch post",
+    cover: { kind: "image", src: "/specimen/cover.svg" },
+    labels: [
+      { id: "label-6", name: "Marketing", color: "orange" },
+      { id: "label-7", name: "Launch" },
+    ],
+    hasDescription: true,
+    attachments: 2,
+  },
+  {
+    title: "Audit every label color for contrast in both themes, including the black swatch on dark cards",
+    cover: { kind: "color", color: "black" },
+    labels: [
+      { id: "label-8", name: "Accessibility", color: "green" },
+      { id: "label-9", name: "Design", color: "pink" },
+      { id: "label-10", color: "red" },
+      { id: "label-11", color: "blue" },
+    ],
+    due: { date: "2026-12-02" },
+    checklist: { checked: 3, total: 12 },
+    hasDescription: true,
+    comments: 1,
+    attachments: 1,
+  },
+]
+
 export default function SpecimenPage() {
   return (
     <main className="@container mx-auto flex max-w-5xl flex-col gap-10 px-4 py-8">
@@ -97,6 +150,9 @@ export default function SpecimenPage() {
       <Buttons />
       <Chips />
       <Fields />
+      <LabelColors />
+      <ListTints />
+      <Cards />
     </main>
   )
 }
@@ -232,6 +288,55 @@ function Fields() {
           <FieldError id="specimen-textarea-error-message">Write something before you post.</FieldError>
         </Field>
       </FieldGroup>
+    </Section>
+  )
+}
+
+function LabelColors() {
+  return (
+    <Section title="Label colors">
+      <ul className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-3">
+        {LABEL_COLOR_KEYS.map(color => (
+          <li key={color} className="flex flex-col items-start gap-2 rounded-card bg-card p-3">
+            <LabelChip label={{ id: `${color}-named`, name: LABEL_COLOR_NAMES[color], color }} />
+            <div className="flex items-center gap-2">
+              <LabelChip label={{ id: color, color }} />
+              <span className="flex items-center gap-2 rounded-chip bg-muted p-1.5">
+                <LabelChip label={{ id: color, color }} />
+              </span>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+function ListTints() {
+  return (
+    <Section title="List tints">
+      <ul className="grid grid-cols-[repeat(auto-fill,minmax(9rem,1fr))] gap-3">
+        {LABEL_COLOR_KEYS.map(color => (
+          <li key={color} data-color={color} className="flex items-baseline justify-between gap-2 rounded-list bg-label-list p-4">
+            <span className="text-heading">{LABEL_COLOR_NAMES[color]}</span>
+            <span className="text-meta text-muted-foreground">4</span>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+function Cards() {
+  return (
+    <Section title="Cards">
+      <ul className="flex w-full max-w-list-w flex-col gap-card-gap rounded-list bg-list p-list-pad">
+        {FIXTURE_CARDS.map(card => (
+          <li key={card.title}>
+            <CardFace card={card} />
+          </li>
+        ))}
+      </ul>
     </Section>
   )
 }

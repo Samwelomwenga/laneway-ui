@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Instrument_Sans } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
+import { TooltipProvider } from "@/components/ui/tooltip"
 import "@/app/globals.css"
 
 const instrumentSans = Instrument_Sans({
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>
       </body>
     </html>
