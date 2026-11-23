@@ -2,18 +2,24 @@
 
 import type { Announcements, DragStartEvent, DropAnimation, DropAnimationKeyframeResolver, ScreenReaderInstructions } from "@dnd-kit/core"
 import type { BoardCardData, BoardListData, BoardListMeta } from "@/components/board/board-types"
+import type { MoveDestination } from "@/components/board/move-card-panel"
+import type { CardSnapshot } from "@/components/board/move-motion"
 import type { Placement } from "@/lib/board-placement"
 import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { AddList, BoardList, BoardListOverlay } from "@/components/board/board-list"
+import { MoveCardPanel } from "@/components/board/move-card-panel"
+import { focusCardMenu, milliseconds, playMove, snapshotCards } from "@/components/board/move-motion"
 import { CardFace } from "@/components/card-face"
 import { Kanban, KanbanBoard, KanbanOverlay } from "@/components/reui/kanban"
-import { findPlacement, landingPlacement } from "@/lib/board-placement"
+import { useToastManager } from "@/components/ui/toast"
+import { findPlacement, landingPlacement, moveItem } from "@/lib/board-placement"
 import { cn } from "@/lib/utils"
 
 type CardsByList = Record<string, BoardCardData[]>
 type DragKind = "card" | "list"
+type MoveTarget = { card: BoardCardData, from: Placement, anchor: HTMLElement | null }
 
 const SCREEN_READER_INSTRUCTIONS: ScreenReaderInstructions = {
   draggable: "Press Space to pick up. While dragging, use the arrow keys to move, Space or Enter to drop, and Escape to cancel.",
@@ -30,8 +36,24 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   )
   const [dragKind, setDragKind] = useState<DragKind>("card")
   const [dropAnimation, setDropAnimation] = useState<DropAnimation | null>(null)
-  const [openedCard, setOpenedCard] = useState<BoardCardData>()
+  const [status, setStatus] = useState("")
+  const [moveTarget, setMoveTarget] = useState<MoveTarget>()
+  const [moveOpen, setMoveOpen] = useState(false)
+  const pendingMoveRef = useRef<MoveDestination>(undefined)
   const originRef = useRef<Placement>(undefined)
+  const boardRef = useRef<HTMLDivElement>(null)
+  const toastManager = useToastManager()
+  const motionRef = useRef<{ before: CardSnapshot, id: string }>(undefined)
+
+  useLayoutEffect(() => {
+    const motion = motionRef.current
+    const root = boardRef.current
+    if (!motion || !root)
+      return
+    motionRef.current = undefined
+    playMove(root, motion.before, motion.id)
+    focusCardMenu(root, motion.id)
+  }, [cardsByList])
 
   const isList = (id: string) => id in cardsByList
   const cardTitle = (id: string) => findCard(cardsByList, id)?.title ?? ""
@@ -94,6 +116,68 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
     setDropAnimation(readDropAnimation(kind))
   }
 
+  function openCard(card: BoardCardData) {
+    setStatus(`Opened ${card.title}. Card detail isn't built yet.`)
+  }
+
+  function startMove(card: BoardCardData, anchor: HTMLElement | null) {
+    const from = findPlacement(cardsByList, cardId, card.id)
+    if (!from)
+      return
+    setMoveTarget({ card, from, anchor })
+    setMoveOpen(true)
+  }
+
+  function submitMove(to: MoveDestination) {
+    pendingMoveRef.current = to
+    setMoveOpen(false)
+  }
+
+  function relocate(id: string, to: MoveDestination) {
+    const root = boardRef.current
+    if (!root)
+      return
+    motionRef.current = {
+      before: snapshotCards(root),
+      id,
+    }
+    setCardsByList(current => moveItem(current, cardId, id, to.listId, to.index))
+  }
+
+  function focusAfterMovePanel() {
+    const moving = pendingMoveRef.current !== undefined
+    return !moving && (moveTarget?.anchor ?? true)
+  }
+
+  function finishMove() {
+    const to = pendingMoveRef.current
+    pendingMoveRef.current = undefined
+    setMoveTarget(undefined)
+    if (!moveTarget || !to)
+      return
+    const { card, from } = moveTarget
+    if (to.listId === from.listId && to.index === from.index) {
+      if (boardRef.current)
+        focusCardMenu(boardRef.current, card.id)
+      return
+    }
+    const total = to.listId === from.listId
+      ? from.total
+      : (cardsByList[to.listId]?.length ?? 0) + 1
+    relocate(card.id, to)
+    const toastId = toastManager.add({
+      title: `Moved ${card.title} to ${describe({ ...to, total })}.`,
+      actionProps: {
+        children: "Undo",
+        onClick() {
+          toastManager.close(toastId)
+          relocate(card.id, from)
+          setStatus(`Moved ${card.title} back to ${describe(from)}.`)
+        },
+      },
+    })
+  }
+
   function addCard(listId: string, title: string) {
     setCardsByList(current => ({
       ...current,
@@ -117,9 +201,9 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div ref={boardRef} className="flex min-h-0 flex-1 flex-col">
       <p role="status" className="min-h-5 px-list-gap text-meta text-muted-foreground">
-        {openedCard && `Opened ${openedCard.title}. Card detail isn't built yet.`}
+        {status}
       </p>
       <Kanban
         value={cardsByList}
@@ -137,7 +221,8 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
               list={listMeta(lists, listId)}
               cards={cards}
               onAddCard={addCard}
-              onOpenCard={setOpenedCard}
+              onOpenCard={openCard}
+              onMoveCard={startMove}
             />
           ))}
           <AddList onAdd={addList} />
@@ -155,6 +240,23 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
           }}
         </KanbanOverlay>
       </Kanban>
+      {moveTarget && (
+        <MoveCardPanel
+          open={moveOpen}
+          cardTitle={moveTarget.card.title}
+          from={moveTarget.from}
+          lists={Object.entries(cardsByList).map(([id, cards]) => ({
+            id,
+            name: listName(id),
+            count: cards.length,
+          }))}
+          anchor={moveTarget.anchor}
+          onSubmit={submitMove}
+          onOpenChange={setMoveOpen}
+          onClosed={finishMove}
+          finalFocus={focusAfterMovePanel}
+        />
+      )}
     </div>
   )
 }
@@ -193,13 +295,6 @@ const cardDropKeyframes: DropAnimationKeyframeResolver = ({ transform }) => [
     boxShadow: cssVar("--shadow-card"),
   },
 ]
-
-function milliseconds(duration: string) {
-  const value = Number.parseFloat(duration)
-  return duration.endsWith("ms")
-    ? value
-    : value * 1000
-}
 
 function readDropAnimation(kind: DragKind): DropAnimation | null {
   if (matchMedia("(prefers-reduced-motion: reduce)").matches)

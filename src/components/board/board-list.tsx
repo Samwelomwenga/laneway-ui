@@ -18,11 +18,13 @@ export function BoardList({
   cards,
   onAddCard,
   onOpenCard,
+  onMoveCard,
 }: Readonly<{
   list: BoardListMeta
   cards: BoardCardData[]
   onAddCard: (listId: string, title: string) => void
   onOpenCard: (card: BoardCardData) => void
+  onMoveCard: (card: BoardCardData, anchor: HTMLElement | null) => void
 }>) {
   const headingId = useId()
   const scrollerRef = useRef<HTMLDivElement>(null)
@@ -47,7 +49,7 @@ export function BoardList({
         className="-m-1 min-h-0 scroll-py-1 overflow-y-auto p-1"
       >
         {cards.map(card => (
-          <BoardCard key={card.id} card={card} onOpen={onOpenCard} />
+          <BoardCard key={card.id} card={card} onOpen={onOpenCard} onMove={onMoveCard} />
         ))}
       </KanbanColumnContent>
       <AddCard

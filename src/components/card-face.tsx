@@ -36,10 +36,12 @@ export function CardFace({
   card,
   onOpen,
   grip,
+  menu,
 }: Readonly<{
   card: CardFaceData
   onOpen?: () => void
   grip?: React.ReactNode
+  menu?: React.ReactNode
 }>) {
   const { title, cover, labels = [] } = card
   return (
@@ -71,18 +73,32 @@ export function CardFace({
         <CardMeta card={card} />
       </CardContent>
       {grip}
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "absolute end-1.5 top-1.5 pointer-coarse:end-0 pointer-coarse:top-0 pointer-fine:opacity-0 pointer-fine:group-focus-within/card:opacity-100 pointer-fine:group-hover/card:opacity-100",
-          cover && "bg-card shadow-card",
-        )}
-      >
-        <Icon icon={MoreHorizontalIcon} />
-        <span className="sr-only">{`Actions for ${title}`}</span>
-      </Button>
+      {menu ?? <CardMenuButton title={title} hasCover={cover !== undefined} />}
     </Card>
+  )
+}
+
+export function CardMenuButton({
+  title,
+  hasCover,
+  className,
+  ...props
+}: Readonly<React.ComponentProps<typeof Button> & { title: string, hasCover: boolean }>) {
+  return (
+    <Button
+      variant="ghost"
+      size="icon"
+      data-card-menu=""
+      className={cn(
+        "absolute end-1.5 top-1.5 z-2 pointer-coarse:end-0 pointer-coarse:top-0 pointer-fine:opacity-0 pointer-fine:group-focus-within/card:opacity-100 pointer-fine:group-hover/card:opacity-100 pointer-fine:aria-expanded:opacity-100",
+        hasCover && "bg-card shadow-card",
+        className,
+      )}
+      {...props}
+    >
+      <Icon icon={MoreHorizontalIcon} />
+      <span className="sr-only">{`Actions for ${title}`}</span>
+    </Button>
   )
 }
 

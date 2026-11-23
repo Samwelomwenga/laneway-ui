@@ -11,6 +11,22 @@ export function findPlacement<T>(itemsByList: ItemsByList<T>, getId: (item: T) =
   return undefined
 }
 
+export function moveItem<T>(
+  itemsByList: ItemsByList<T>,
+  getId: (item: T) => string,
+  itemId: string,
+  toListId: string,
+  toIndex: number,
+): ItemsByList<T> {
+  const from = findPlacement(itemsByList, getId, itemId)
+  const item = from && itemsByList[from.listId]?.[from.index]
+  if (!from || item === undefined)
+    return itemsByList
+  const next = { ...itemsByList, [from.listId]: itemsByList[from.listId]?.toSpliced(from.index, 1) ?? [] }
+  const target = next[toListId]?.toSpliced(toIndex, 0, item) ?? [item]
+  return { ...next, [toListId]: target }
+}
+
 /**
  * Where a dragged card lands if dropped on `overId`, read from the lists as
  * they were before the kanban applied that move. It mirrors the kanban's own
