@@ -102,6 +102,16 @@
 
   --ease-enter: cubic-bezier(0.2, 0, 0, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  --animate-lift: lift var(--duration-fast) var(--ease-enter);
+
+  @keyframes lift {
+    from {
+      box-shadow: var(--shadow-card);
+      rotate: 0deg;
+      scale: 1;
+    }
+  }
 }
 
 @theme static {
@@ -269,7 +279,8 @@
   --label-tint: oklch(0.27 0.01 110);
   --label-text: oklch(0.97 0.004 105);
   --label-strong: oklch(0.27 0.01 110);
-  --label-list: color-mix(in oklch, var(--label-tint) 6%, var(--list));
+  /* Chrome resolves this near-gray oklch mix to hue none and paints it pink, so it mixes in oklab. */
+  --label-list: color-mix(in oklab, var(--label-tint) 6%, var(--list));
 }
 
 [data-color="sky"] {

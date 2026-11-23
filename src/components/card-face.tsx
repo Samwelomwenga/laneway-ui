@@ -32,14 +32,22 @@ export type CardFaceData = {
 
 const dueFormat = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" })
 
-export function CardFace({ card }: Readonly<{ card: CardFaceData }>) {
+export function CardFace({
+  card,
+  onOpen,
+  grip,
+}: Readonly<{
+  card: CardFaceData
+  onOpen?: () => void
+  grip?: React.ReactNode
+}>) {
   const { title, cover, labels = [] } = card
   return (
     <Card>
       {cover && <CardCover cover={cover} />}
       <CardContent className={cn(cover && "pt-card-inner", cover?.kind !== "image" && "*:first:pe-control-sm")}>
         {labels.length > 0 && (
-          <ul aria-label="Labels" className="flex flex-wrap items-center gap-1.5">
+          <ul aria-label="Labels" className="relative z-1 flex flex-wrap items-center gap-1.5">
             {labels.map(label => (
               <li key={label.id} className="flex max-w-full">
                 <LabelChip label={label} />
@@ -47,9 +55,22 @@ export function CardFace({ card }: Readonly<{ card: CardFaceData }>) {
             ))}
           </ul>
         )}
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>
+          {onOpen
+            ? (
+                <button
+                  type="button"
+                  onClick={onOpen}
+                  className="text-start outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-ring"
+                >
+                  {title}
+                </button>
+              )
+            : title}
+        </CardTitle>
         <CardMeta card={card} />
       </CardContent>
+      {grip}
       <Button
         variant="ghost"
         size="icon"
