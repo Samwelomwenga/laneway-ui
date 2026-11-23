@@ -37,7 +37,7 @@ export function CardFace({ card }: Readonly<{ card: CardFaceData }>) {
   return (
     <Card>
       {cover && <CardCover cover={cover} />}
-      <CardContent className={cn(cover?.kind !== "image" && "*:first:pe-control-sm")}>
+      <CardContent className={cn(cover && "pt-card-inner", cover?.kind !== "image" && "*:first:pe-control-sm")}>
         {labels.length > 0 && (
           <ul aria-label="Labels" className="flex flex-wrap items-center gap-1.5">
             {labels.map(label => (
