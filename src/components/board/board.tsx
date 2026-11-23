@@ -4,6 +4,7 @@ import type { Announcements, DragStartEvent, DropAnimation, DropAnimationKeyfram
 import type { BoardCardData, BoardListData, BoardListMeta } from "@/components/board/board-types"
 import type { MoveDestination } from "@/components/board/move-card-panel"
 import type { CardSnapshot } from "@/components/board/move-motion"
+import type { BoardLabel } from "@/components/label-chip"
 import type { Placement } from "@/lib/board-placement"
 import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
@@ -11,7 +12,8 @@ import { useLayoutEffect, useRef, useState } from "react"
 import { AddList, BoardList, BoardListOverlay } from "@/components/board/board-list"
 import { ListStrip } from "@/components/board/list-strip"
 import { MoveCardPanel } from "@/components/board/move-card-panel"
-import { focusCardMenu, milliseconds, playMove, prefersReducedMotion, snapshotCards } from "@/components/board/move-motion"
+import { cssVar, focusCardMenu, milliseconds, playMove, prefersReducedMotion, snapshotCards } from "@/components/board/move-motion"
+import { CardDetail } from "@/components/card-detail/card-detail"
 import { CardFace } from "@/components/card-face"
 import { Kanban, KanbanBoard, KanbanOverlay } from "@/components/reui/kanban"
 import { useToastManager } from "@/components/ui/toast"
@@ -28,7 +30,7 @@ const SCREEN_READER_INSTRUCTIONS: ScreenReaderInstructions = {
 
 const cardId = (card: BoardCardData) => card.id
 
-export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[] }>) {
+export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardListData[], labels: BoardLabel[] }>) {
   const [cardsByList, setCardsByList] = useState<CardsByList>(() =>
     Object.fromEntries(initialLists.map(list => [list.id, list.cards])),
   )
@@ -40,6 +42,8 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   const [status, setStatus] = useState("")
   const [moveTarget, setMoveTarget] = useState<MoveTarget>()
   const [moveOpen, setMoveOpen] = useState(false)
+  const [detailCardId, setDetailCardId] = useState<string>()
+  const [detailOpen, setDetailOpen] = useState(false)
   const pendingMoveRef = useRef<MoveDestination>(undefined)
   const originRef = useRef<Placement>(undefined)
   const boardRef = useRef<HTMLDivElement>(null)
@@ -57,6 +61,11 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
     playMove(root, motion.before, motion.id)
     focusCardMenu(root, motion.id)
   }, [cardsByList])
+
+  const detailCard = detailCardId === undefined
+    ? undefined
+    : findCard(cardsByList, detailCardId)
+  const detailListId = detailCard && findPlacement(cardsByList, cardId, detailCard.id)?.listId
 
   const isList = (id: string) => id in cardsByList
   const cardTitle = (id: string) => findCard(cardsByList, id)?.title ?? ""
@@ -120,7 +129,23 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
   }
 
   function openCard(card: BoardCardData) {
-    setStatus(`Opened ${card.title}. Card detail isn't built yet.`)
+    setDetailCardId(card.id)
+    setDetailOpen(true)
+  }
+
+  function updateCard(next: BoardCardData) {
+    setCardsByList(current => Object.fromEntries(
+      Object.entries(current).map(([listId, cards]) => [
+        listId,
+        cards.map(card => card.id === next.id
+          ? next
+          : card),
+      ]),
+    ))
+  }
+
+  function cardOpenButton(id: string) {
+    return boardRef.current?.querySelector<HTMLElement>(`[data-slot="kanban-item"][data-value="${globalThis.CSS.escape(id)}"] [data-card-open]`) ?? null
   }
 
   function startMove(card: BoardCardData, anchor: HTMLElement | null) {
@@ -281,6 +306,20 @@ export function Board({ initialLists }: Readonly<{ initialLists: BoardListData[]
           }}
         </KanbanOverlay>
       </Kanban>
+      <CardDetail
+        open={detailOpen}
+        card={detailCard}
+        listName={detailListId === undefined
+          ? ""
+          : listName(detailListId)}
+        boardLabels={labels}
+        onChange={updateCard}
+        onOpenChange={setDetailOpen}
+        onClosed={() => setDetailCardId(undefined)}
+        finalFocus={() => detailCardId === undefined
+          ? null
+          : cardOpenButton(detailCardId)}
+      />
       {moveTarget && (
         <MoveCardPanel
           open={moveOpen}
@@ -337,10 +376,6 @@ function findCard(cardsByList: CardsByList, id: string) {
       return card
   }
   return undefined
-}
-
-function cssVar(name: string) {
-  return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
 
 const cardDropKeyframes: DropAnimationKeyframeResolver = ({ transform }) => [

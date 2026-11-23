@@ -7,6 +7,10 @@ function Popover(props: Readonly<PopoverPrimitive.Root.Props>) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
+function PopoverTrigger(props: Readonly<PopoverPrimitive.Trigger.Props>) {
+  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+}
+
 function PopoverContent({
   className,
   align = "end",
@@ -52,4 +56,4 @@ function PopoverTitle({ className, ...props }: Readonly<PopoverPrimitive.Title.P
   )
 }
 
-export { Popover, PopoverContent, PopoverTitle }
+export { Popover, PopoverContent, PopoverTitle, PopoverTrigger }

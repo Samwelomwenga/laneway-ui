@@ -17,27 +17,36 @@ type BoardCardProps = Readonly<{
 
 export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
-  const pendingMoveRef = useRef(false)
+  const pendingActionRef = useRef<"open" | "move">(undefined)
 
-  function requestMove() {
-    pendingMoveRef.current = true
-  }
-
-  function openMoveOnceClosed(open: boolean) {
-    if (open || !pendingMoveRef.current)
+  function runActionOnceClosed(open: boolean) {
+    const action = pendingActionRef.current
+    if (open || !action)
       return
-    pendingMoveRef.current = false
-    onMove(card, menuButtonRef.current)
+    pendingActionRef.current = undefined
+    if (action === "open")
+      onOpen(card)
+    else
+      onMove(card, menuButtonRef.current)
   }
 
-  const menuItems = <CardMenuItems onOpen={() => onOpen(card)} onMove={requestMove} />
+  const menuItems = (
+    <CardMenuItems
+      onOpen={() => {
+        pendingActionRef.current = "open"
+      }}
+      onMove={() => {
+        pendingActionRef.current = "move"
+      }}
+    />
+  )
 
   return (
     <KanbanItem
       value={card.id}
       className="rounded-card data-[dragging=true]:bg-foreground/9 data-[dragging=true]:*:opacity-0"
     >
-      <ContextMenu onOpenChangeComplete={openMoveOnceClosed}>
+      <ContextMenu onOpenChangeComplete={runActionOnceClosed}>
         <ContextMenuTrigger>
           <KanbanItemHandle input="pointer" cursor={false}>
             <CardFace
@@ -45,7 +54,7 @@ export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
               onOpen={() => onOpen(card)}
               grip={<CardGrip title={card.title} />}
               menu={(
-                <DropdownMenu onOpenChangeComplete={openMoveOnceClosed}>
+                <DropdownMenu onOpenChangeComplete={runActionOnceClosed}>
                   <DropdownMenuTrigger
                     ref={menuButtonRef}
                     render={<CardMenuButton title={card.title} hasCover={card.cover !== undefined} />}

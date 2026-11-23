@@ -46,7 +46,7 @@ export function snapshotCards(root: HTMLElement): CardSnapshot {
   return snapshot
 }
 
-function cssVar(element: Element, name: string) {
+export function cssVar(name: string, element: Element = document.documentElement) {
   return getComputedStyle(element).getPropertyValue(name).trim()
 }
 
@@ -67,23 +67,23 @@ function wash(card: HTMLElement) {
   const face = card.querySelector<HTMLElement>("[data-slot=\"card\"]")
   if (!face)
     return
-  const surface = cssVar(face, "--card")
+  const surface = cssVar("--card", face)
   track(face.animate(
     [
-      { backgroundColor: `color-mix(in oklch, ${cssVar(face, "--primary")} 50%, ${surface})` },
+      { backgroundColor: `color-mix(in oklch, ${cssVar("--primary", face)} 50%, ${surface})` },
       { backgroundColor: surface },
     ],
     {
       duration: 1000,
-      easing: cssVar(face, "--ease-exit"),
+      easing: cssVar("--ease-exit", face),
     },
   ))
 }
 
 function closeGaps(root: HTMLElement, before: CardSnapshot, movedId: string) {
   const timing = {
-    duration: milliseconds(cssVar(root, "--duration-base")),
-    easing: cssVar(root, "--ease-enter"),
+    duration: milliseconds(cssVar("--duration-base", root)),
+    easing: cssVar("--ease-enter", root),
   }
   for (const element of cardElements(root)) {
     const id = element.dataset.value
@@ -128,8 +128,8 @@ function flyGhostOverListScrollers(card: HTMLElement, from: DOMRect, onLand: () 
       { translate: `${to.left - from.left}px ${to.top - from.top}px` },
     ],
     {
-      duration: milliseconds(cssVar(card, "--duration-slow")),
-      easing: cssVar(card, "--ease-enter"),
+      duration: milliseconds(cssVar("--duration-slow", card)),
+      easing: cssVar("--ease-enter", card),
     },
   ))
   function land() {

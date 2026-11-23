@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { FIXTURE_LISTS } from "@/app/specimen/board/fixture"
+import { FIXTURE_LABELS, FIXTURE_LISTS } from "@/app/specimen/board/fixture"
 import { Board } from "@/components/board/board"
 import { ModeToggle } from "@/components/mode-toggle"
 
@@ -14,7 +14,7 @@ export default function FixtureBoardPage() {
         <h1 className="text-title">Fixture board</h1>
         <ModeToggle />
       </header>
-      <Board initialLists={FIXTURE_LISTS} />
+      <Board initialLists={FIXTURE_LISTS} labels={FIXTURE_LABELS} />
     </main>
   )
 }

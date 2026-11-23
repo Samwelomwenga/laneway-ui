@@ -1,4 +1,5 @@
 import type { BoardLabel } from "@/components/label-chip"
+import type { CalendarDay } from "@/lib/card-fields"
 import type { LabelColor } from "@/lib/label-colors"
 import {
   Attachment01Icon,
@@ -23,7 +24,7 @@ export type CardFaceData = {
   title: string
   cover?: Cover
   labels?: BoardLabel[]
-  due?: { date: string, complete?: boolean, overdue?: boolean }
+  due?: { date: CalendarDay, complete?: boolean, overdue?: boolean }
   checklist?: { checked: number, total: number }
   hasDescription?: boolean
   comments?: number
@@ -62,6 +63,7 @@ export function CardFace({
             ? (
                 <button
                   type="button"
+                  data-card-open=""
                   onClick={onOpen}
                   className="text-start outline-none after:absolute after:inset-0 after:rounded-card focus-visible:after:outline-2 focus-visible:after:-outline-offset-2 focus-visible:after:outline-ring"
                 >

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 const SIZES = {
   meta: { className: "size-4", strokeWidth: 2.25 },
   control: { className: "size-4", strokeWidth: 2.25 },
+  check: { className: "size-3.5", strokeWidth: 2.57 },
   nav: { className: "size-5", strokeWidth: 1.8 },
 } as const
 
