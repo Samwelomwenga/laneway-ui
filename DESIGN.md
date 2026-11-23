@@ -239,7 +239,7 @@ A moss-and-lime palette: low-chroma warm grays that read like stone, with one br
 
 ### Status
 
-- `destructive`, `success`, `warning`, and `info` each work as text on a card and as a fill with their `-foreground`. An overdue date reads in `destructive`. A done due date and a finished checklist read in `success`.
+- `destructive`, `success`, `warning`, and `info` each work as text on a card and as a fill with their `-foreground`. An overdue date reads in `destructive`. A complete due date, and a checklist with every check item checked, read in `success`.
 
 ### Label, cover, and list colors
 
@@ -435,11 +435,11 @@ Calm and solid. 0.75rem corners, 2.25rem tall, 0.875rem inline padding, 2.75rem 
 
 The signature component. Straight, quiet, and only as tall as its content.
 
-- **Order:** cover, labels, title, meta. Each part shows only when the card has it, 0.5rem apart.
+- **Order:** cover, labels, title, meta. Each part shows only when the card has it, 0.5rem apart. That includes the gap under a cover, so a covered card's content starts 0.5rem below the cover, not at the 0.75rem top padding.
 - **Title-only card:** just the title at 0.75rem by 0.875rem padding. No minimum height and no compact form.
 - **Color cover:** a 1.75rem band of the strong step across the top, with no text. Yellow in light and Black in dark draw their ring as a 1px inset line on the band's bottom edge.
 - **Image cover:** edge to edge at 16:9, `object-fit: cover`, cropped from the center.
-- **Meta:** one wrapping row of meta text with 1rem icons: due date, checklist, description, comments, attachments. A late due date reads "Nov 18, overdue" in `destructive`. A done due date and a finished checklist read in `success`. Description is an icon alone with hidden text "Has a description". The rest are an icon plus a count, each with hidden text.
+- **Meta:** one wrapping row of meta text with 1rem icons: due date, checklist, description, comments, attachments. A late due date reads "Nov 18, overdue" in `destructive`. A complete due date, and a checklist with every check item checked, read in `success`. Description is an icon alone with hidden text "Has a description". The rest are an icon plus a count, each with hidden text.
 - **Menu button:** top-right corner. With a fine pointer it shows on hover and focus. On a coarse pointer it is always visible. Over a cover it gets a `card` background and `--shadow-card`.
 - **Grip:** a separate grab handle button inside the card, always focusable. It shows on hover and focus with a fine pointer, and only on keyboard focus on a coarse pointer.
 - **Picked up:** `--shadow-lift` and `rotate(-1.5deg) scale(1.02)`. Its slot stays behind as a placeholder filled with `foreground` at 9%, at the card radius.
@@ -556,6 +556,7 @@ Short, spatial, and never bouncy. Things that arrive or move use the enter ease.
 | Undo a move                    | Same as Move…, back to the old slot                                                                                                     | Same as reduced Move…                                            |
 | Dialog open                    | Fade plus scale from 0.96, base. The scrim fades over the same time, linear                                                             | Fade, fast                                                       |
 | Dialog close                   | Fade plus scale to 0.98, 150ms, exit ease                                                                                               | Fade, fast                                                       |
+| Tooltip                        | Opens after a 300ms hover delay, so moving across a board doesn't flash tooltips. Fade plus scale from 0.95, fast                       | Fade, fast                                                       |
 | Popover and menu               | Fade plus scale from 0.95 out of the trigger corner, fast. On a coarse pointer the sheet rises 1.5rem instead                           | Fade, fast                                                       |
 | Toast                          | Rises 1rem with a fade, base. Leaves with a fade, fast                                                                                  | Fade, fast                                                       |
 | Phone list jump from the strip | Smooth scroll to the list's snap point                                                                                                  | Jumps, no scroll                                                 |
