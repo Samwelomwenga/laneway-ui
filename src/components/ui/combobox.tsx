@@ -4,6 +4,7 @@ import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
 import { Cancel01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { useRef } from "react"
 import { Icon } from "@/components/icon"
+import { Badge } from "@/components/ui/badge"
 import { MENU_POPUP_CLASS } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
@@ -32,9 +33,13 @@ function ComboboxChip({
   return (
     <ComboboxPrimitive.Chip
       data-slot="combobox-chip"
-      className={cn(
-        "flex h-control-sm max-w-full items-center gap-0.5 rounded-chip ps-2.5 text-meta outline-none focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-ring data-highlighted:outline-2 data-highlighted:outline-offset-1 data-highlighted:outline-ring",
-        className,
+      render={(
+        <Badge
+          className={cn(
+            "max-w-full justify-start gap-0.5 pe-0 outline-none focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-ring data-highlighted:outline-2 data-highlighted:outline-offset-1 data-highlighted:outline-ring",
+            className,
+          )}
+        />
       )}
       {...props}
     >

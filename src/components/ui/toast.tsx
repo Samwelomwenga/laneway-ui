@@ -44,7 +44,7 @@ function Toaster({ children }: Readonly<{ children: React.ReactNode }>) {
       <ToastPrimitive.Portal>
         <ToastPrimitive.Viewport
           data-slot="toast-viewport"
-          className="pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto max-w-sm outline-none"
+          className="pointer-events-none fixed inset-x-4 bottom-4 z-60 mx-auto max-w-sm outline-none"
         >
           <ToastList />
         </ToastPrimitive.Viewport>

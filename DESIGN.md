@@ -311,7 +311,7 @@ Headings use `text-wrap: balance`. The scale survives 320px with the 1.4.12 text
 
 ## Layout
 
-Everything that sets layout or size is in rem: breakpoints, spacing, control heights, widths, radii, type, and mascot sizes. px stays only for detail that shouldn't grow with text: 1px borders, the 2px focus and avatar rings, shadow offsets and blur, and the 1.5px icon stroke. A rem is 16px at the default text size. If someone sets their browser's text size to 200%, the breakpoints move with it, so a 1280px laptop gets the phone board. That's intended.
+Everything that sets layout or size is in rem: breakpoints, spacing, control heights, widths, radii, type, and mascot sizes. px stays only for detail that shouldn't grow with text: 1px borders, the 2px focus and avatar rings, shadow offsets and blur, and the 1.5px icon stroke. The due date calendar's day cells are the one exception, described under Card detail. A rem is 16px at the default text size. If someone sets their browser's text size to 200%, the breakpoints move with it, so a 1280px laptop gets the phone board. That's intended.
 
 The base unit is 0.25rem (4px). Spacing steps are 0.25, 0.375, 0.5, 0.75, 0.875, 1, 1.125, 1.5, 1.75, 2, and 2.5rem. Only 0.375, 0.875, and 1.125rem sit off the 4px grid.
 
@@ -414,7 +414,7 @@ Components come from shadcn/ui on Base UI, through the `base-nova` style ([ADR 0
 | Toast                                       | shadcn `toast` on Base UI                          | Polite or urgent by priority, F6 jumps to the region                                                      |
 | Tooltip, tabs, skeleton, empty, form fields | shadcn                                             | The mascot goes in `EmptyMedia`                                                                           |
 | Card and list drag                          | ReUI `kanban`                                      | `onValueCommit` gives the from and to list and index                                                      |
-| Checklist item drag                         | ReUI `sortable`                                    | Same rules as cards                                                                                       |
+| Check item drag                             | ReUI `sortable`                                    | Same rules as cards                                                                                       |
 
 ### Buttons
 
@@ -458,11 +458,15 @@ The signature component. Straight, quiet, and only as tall as its content.
 - Enter on a focused card opens card detail. Space on the grip picks the card up. `restoreOnCancel` is on, so Esc puts it back.
 - Announcements name the card and list, never ids: "Picked up Fix login in To do, position 2 of 4", "Moved Fix login to Done, position 3 of 5". Lists dragged by their handle get the same treatment.
 - "Move…" in the card menu and in card detail opens list and position selects. It is anchored with a fine pointer and a bottom sheet on a coarse pointer. It is the WCAG 2.5.7 alternative to dragging and the sure way to move between lists on a phone.
-- Checklist items follow the same rules, with "Move up" and "Move down" in their menu.
+- Check items follow the same rules, with "Move up" and "Move down" in their menu.
 
 ### Card detail
 
 A centered dialog up to 35rem wide from 40rem up, full screen below 40rem. 1.5rem radius, 1.75rem padding, `--shadow-dialog`.
+
+- **Cover:** bled to the dialog's edges above the title. A color cover is a 2.5rem band of the strong step. An image cover is 16:9 and stops at 12rem tall, so it never becomes a big image cover.
+- **Labels:** a picked label is a chip. A color-only label shows its swatch plus the color name, unlike the card face's bare swatch, so the chip says what Backspace will remove.
+- **Due date calendar:** a day cell is `--size-control`, but shrinks to a seventh of the viewport less 3rem when that is smaller. That keeps the 2.75rem coarse cells inside 320px. It is the one width set in `vw`.
 
 ### Inputs and fields
 
@@ -574,7 +578,6 @@ The tickets behind this file handed these to the build. Where a ticket suggested
 - Whether a touch drag can carry a card across lists with edge auto-scroll, or only within a list. "Move…" is the sure way between lists either way.
 - Whether the phone list strip shows each list's color.
 - Whether dark popovers and dialogs also step one level lighter than `card`, beyond the `border` ring.
-- How a cover shows in card detail.
 - How the icon stroke holds at 1.5px when the browser's text size grows the rem-sized icons.
 - The invite, add, leave, and join flows. They live in the members panel.
 

@@ -9,5 +9,5 @@ ReUI ships four gaps we close ourselves. Its drag handle isn't focusable, Esc ke
 - A separate grip button inside the card carries the keyboard drag. Enter on the card opens card detail, and Space on the grip picks the card up.
 - `restoreOnCancel` is always true.
 - Announcements name the card and the list, never ids.
-- Every draggable thing also has a non-drag way to move: "Move…" for cards and lists, "Move up" and "Move down" for checklist items.
+- Every draggable thing also has a non-drag way to move: "Move…" for cards and lists, "Move up" and "Move down" for check items.
 - Touch starts a drag after a 250ms long press, so the context menu opens on right click only.

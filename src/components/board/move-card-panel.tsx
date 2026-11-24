@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { useCoarsePointer } from "@/hooks/use-coarse-pointer"
 
 export type MoveDestination = Omit<Placement, "total">
-type MoveList = { id: string, name: string, count: number }
+export type MoveList = { id: string, name: string, count: number }
 
 type MoveCardPanelProps = Readonly<{
   open: boolean

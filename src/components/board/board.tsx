@@ -44,13 +44,14 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
   const [moveOpen, setMoveOpen] = useState(false)
   const [detailCardId, setDetailCardId] = useState<string>()
   const [detailOpen, setDetailOpen] = useState(false)
+  const detailOpenRef = useRef(false)
   const pendingMoveRef = useRef<MoveDestination>(undefined)
   const originRef = useRef<Placement>(undefined)
   const boardRef = useRef<HTMLDivElement>(null)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const [currentSlot, setCurrentSlot] = useState(0)
   const toastManager = useToastManager()
-  const motionRef = useRef<{ before: CardSnapshot, id: string }>(undefined)
+  const motionRef = useRef<{ before: CardSnapshot, id: string, focusMenu: boolean }>(undefined)
 
   useLayoutEffect(() => {
     const motion = motionRef.current
@@ -59,17 +60,23 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
       return
     motionRef.current = undefined
     playMove(root, motion.before, motion.id)
-    focusCardMenu(root, motion.id)
+    if (motion.focusMenu)
+      focusCardMenu(root, motion.id)
   }, [cardsByList])
 
   const detailCard = detailCardId === undefined
     ? undefined
     : findCard(cardsByList, detailCardId)
-  const detailListId = detailCard && findPlacement(cardsByList, cardId, detailCard.id)?.listId
+  const detailPlacement = detailCard && findPlacement(cardsByList, cardId, detailCard.id)
 
   const isList = (id: string) => id in cardsByList
   const cardTitle = (id: string) => findCard(cardsByList, id)?.title ?? ""
   const listName = (id: string) => listMeta(lists, id).name
+  const moveLists = Object.entries(cardsByList).map(([id, cards]) => ({
+    id,
+    name: listName(id),
+    count: cards.length,
+  }))
 
   function describe({ listId, index, total }: Placement) {
     return `${listName(listId)}, position ${index + 1} of ${total}`
@@ -130,7 +137,12 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
 
   function openCard(card: BoardCardData) {
     setDetailCardId(card.id)
-    setDetailOpen(true)
+    showDetail(true)
+  }
+
+  function showDetail(open: boolean) {
+    detailOpenRef.current = open
+    setDetailOpen(open)
   }
 
   function updateCard(next: BoardCardData) {
@@ -161,13 +173,14 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
     setMoveOpen(false)
   }
 
-  function relocate(id: string, to: MoveDestination) {
+  function relocate(id: string, to: MoveDestination, focusMenu: boolean) {
     const root = boardRef.current
     if (!root)
       return
     motionRef.current = {
       before: snapshotCards(root),
       id,
+      focusMenu,
     }
     setCardsByList(current => moveItem(current, cardId, id, to.listId, to.index))
   }
@@ -189,17 +202,23 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
         focusCardMenu(boardRef.current, card.id)
       return
     }
+    moveCard(card, from, to, true)
+  }
+
+  function moveCard(card: BoardCardData, from: Placement, to: MoveDestination, focusMenu: boolean) {
     const total = to.listId === from.listId
       ? from.total
       : (cardsByList[to.listId]?.length ?? 0) + 1
-    relocate(card.id, to)
+    relocate(card.id, to, focusMenu)
     const toastId = toastManager.add({
       title: `Moved ${card.title} to ${describe({ ...to, total })}.`,
       actionProps: {
         children: "Undo",
         onClick() {
           toastManager.close(toastId)
-          relocate(card.id, from)
+          relocate(card.id, from, !detailOpenRef.current)
+          if (detailOpenRef.current)
+            document.querySelector<HTMLElement>("[data-slot=dialog-content]")?.focus()
           setStatus(`Moved ${card.title} back to ${describe(from)}.`)
         },
       },
@@ -259,11 +278,7 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
         {status}
       </p>
       <ListStrip
-        lists={Object.entries(cardsByList).map(([id, cards]) => ({
-          id,
-          name: listName(id),
-          count: cards.length,
-        }))}
+        lists={moveLists}
         current={Math.min(currentSlot, Object.keys(cardsByList).length)}
         onJump={jumpToSlot}
       />
@@ -309,12 +324,12 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
       <CardDetail
         open={detailOpen}
         card={detailCard}
-        listName={detailListId === undefined
-          ? ""
-          : listName(detailListId)}
+        placement={detailPlacement}
+        lists={moveLists}
         boardLabels={labels}
         onChange={updateCard}
-        onOpenChange={setDetailOpen}
+        onMove={(card, from, to) => moveCard(card, from, to, false)}
+        onOpenChange={showDetail}
         onClosed={() => setDetailCardId(undefined)}
         finalFocus={() => detailCardId === undefined
           ? null
@@ -325,11 +340,7 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
           open={moveOpen}
           cardTitle={moveTarget.card.title}
           from={moveTarget.from}
-          lists={Object.entries(cardsByList).map(([id, cards]) => ({
-            id,
-            name: listName(id),
-            count: cards.length,
-          }))}
+          lists={moveLists}
           anchor={moveTarget.anchor}
           onSubmit={submitMove}
           onOpenChange={setMoveOpen}
