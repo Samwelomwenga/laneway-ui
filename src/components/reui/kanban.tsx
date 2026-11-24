@@ -723,7 +723,6 @@ function KanbanColumn({
         "className": cn(
           "group/kanban-column flex flex-col",
           isSortableDragging && "z-50",
-          disabled && "opacity-50",
           className,
         ),
         "children": props.children,
@@ -843,7 +842,6 @@ function KanbanItem({
         style,
         "className": cn(
           isSortableDragging && "z-50",
-          disabled && "opacity-50",
           className,
         ),
         "children": props.children,

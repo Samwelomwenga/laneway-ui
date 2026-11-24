@@ -10,10 +10,12 @@ type ListStripItem = { id: string, name: string, count: number }
 export function ListStrip({
   lists,
   current,
+  readOnly,
   onJump,
 }: Readonly<{
   lists: ListStripItem[]
   current: number
+  readOnly: boolean
   onJump: (slot: number) => void
 }>) {
   return (
@@ -40,15 +42,17 @@ export function ListStrip({
           </li>
         ))}
       </ul>
-      <Button
-        variant="ghost"
-        aria-current={current === lists.length || undefined}
-        className="w-control shrink-0 px-0 aria-current:bg-secondary"
-        onClick={() => onJump(lists.length)}
-      >
-        <Icon icon={Add01Icon} />
-        <span className="sr-only">Go to Add a list</span>
-      </Button>
+      {!readOnly && (
+        <Button
+          variant="ghost"
+          aria-current={current === lists.length || undefined}
+          className="w-control shrink-0 px-0 aria-current:bg-secondary"
+          onClick={() => onJump(lists.length)}
+        >
+          <Icon icon={Add01Icon} />
+          <span className="sr-only">Go to Add a list</span>
+        </Button>
+      )}
     </nav>
   )
 }

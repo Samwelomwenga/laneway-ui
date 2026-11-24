@@ -84,3 +84,11 @@ export function isLastAdmin(members: readonly BoardMember[], member: BoardMember
 export function mayAddMembers(role: BoardRole | undefined, setting: AddMembersSetting) {
   return role === "admin" || (role === "normal" && setting === "members")
 }
+
+export function mayEditBoard(role: BoardRole | undefined) {
+  return role === "admin" || role === "normal"
+}
+
+export function boardAdmins(members: readonly BoardMember[]) {
+  return members.filter(member => member.role === "admin")
+}

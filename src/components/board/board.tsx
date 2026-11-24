@@ -30,7 +30,13 @@ const SCREEN_READER_INSTRUCTIONS: ScreenReaderInstructions = {
 
 const cardId = (card: BoardCardData) => card.id
 
-export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardListData[], labels: BoardLabel[] }>) {
+type BoardProps = Readonly<{
+  initialLists: BoardListData[]
+  labels: BoardLabel[]
+  readOnly: boolean
+}>
+
+export function Board({ initialLists, labels, readOnly }: BoardProps) {
   const [cardsByList, setCardsByList] = useState<CardsByList>(() =>
     Object.fromEntries(initialLists.map(list => [list.id, list.cards])),
   )
@@ -280,6 +286,7 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
       <ListStrip
         lists={moveLists}
         current={Math.min(currentSlot, Object.keys(cardsByList).length)}
+        readOnly={readOnly}
         onJump={jumpToSlot}
       />
       <Kanban
@@ -301,12 +308,13 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
               key={listId}
               list={listMeta(lists, listId)}
               cards={cards}
+              readOnly={readOnly}
               onAddCard={addCard}
               onOpenCard={openCard}
               onMoveCard={startMove}
             />
           ))}
-          <AddList onAdd={addList} />
+          {!readOnly && <AddList onAdd={addList} />}
         </KanbanBoard>
         <KanbanOverlay
           dropAnimation={dropAnimation}
@@ -327,6 +335,7 @@ export function Board({ initialLists, labels }: Readonly<{ initialLists: BoardLi
         placement={detailPlacement}
         lists={moveLists}
         boardLabels={labels}
+        readOnly={readOnly}
         onChange={updateCard}
         onMove={(card, from, to) => moveCard(card, from, to, false)}
         onOpenChange={showDetail}

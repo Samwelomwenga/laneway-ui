@@ -16,12 +16,14 @@ const LIST_SURFACE = "flex max-h-full w-list-w shrink-0 flex-col gap-card-gap ro
 export function BoardList({
   list,
   cards,
+  readOnly,
   onAddCard,
   onOpenCard,
   onMoveCard,
 }: Readonly<{
   list: BoardListMeta
   cards: BoardCardData[]
+  readOnly: boolean
   onAddCard: (listId: string, title: string) => void
   onOpenCard: (card: BoardCardData) => void
   onMoveCard: (card: BoardCardData, anchor: HTMLElement | null) => void
@@ -32,6 +34,7 @@ export function BoardList({
   return (
     <KanbanColumn
       value={list.id}
+      disabled={readOnly}
       data-color={list.color}
       aria-labelledby={headingId}
       data-board-slot
@@ -43,23 +46,25 @@ export function BoardList({
         "data-[dragging=true]:bg-foreground/9 data-[dragging=true]:*:opacity-0",
       )}
     >
-      <ListHeader list={list} count={cards.length} headingId={headingId} grip={<ListGrip listName={list.name} />} />
+      <ListHeader list={list} count={cards.length} headingId={headingId} grip={!readOnly && <ListGrip listName={list.name} />} />
       <KanbanColumnContent
         ref={scrollerRef}
         value={list.id}
         className="relative -m-1 min-h-0 scroll-py-1 overflow-y-auto p-1"
       >
         {cards.map(card => (
-          <BoardCard key={card.id} card={card} onOpen={onOpenCard} onMove={onMoveCard} />
+          <BoardCard key={card.id} card={card} readOnly={readOnly} onOpen={onOpenCard} onMove={onMoveCard} />
         ))}
       </KanbanColumnContent>
-      <AddCard
-        listName={list.name}
-        onAdd={(title) => {
-          onAddCard(list.id, title)
-          requestAnimationFrame(() => scrollerRef.current?.scrollTo({ top: scrollerRef.current.scrollHeight }))
-        }}
-      />
+      {!readOnly && (
+        <AddCard
+          listName={list.name}
+          onAdd={(title) => {
+            onAddCard(list.id, title)
+            requestAnimationFrame(() => scrollerRef.current?.scrollTo({ top: scrollerRef.current.scrollHeight }))
+          }}
+        />
+      )}
     </KanbanColumn>
   )
 }

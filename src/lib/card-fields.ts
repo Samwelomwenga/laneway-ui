@@ -34,3 +34,19 @@ export function fromCalendarDay(day: CalendarDay) {
   const [year = 0, month = 1, date = 1] = day.split("-").map(Number)
   return new Date(year, month - 1, date)
 }
+
+const longFormat = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+})
+
+export function dueText(due: NonNullable<BoardCardData["due"]>) {
+  const date = longFormat.format(new Date(due.date))
+  if (due.complete === true)
+    return `${date}, complete`
+  if (due.overdue === true)
+    return `${date}, overdue`
+  return date
+}

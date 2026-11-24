@@ -8,24 +8,8 @@ import { Icon } from "@/components/icon"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTitle, PopoverTrigger } from "@/components/ui/popover"
-import { fromCalendarDay, toCalendarDay } from "@/lib/card-fields"
+import { dueText, fromCalendarDay, toCalendarDay } from "@/lib/card-fields"
 import { cn } from "@/lib/utils"
-
-const longFormat = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-})
-
-function dueText(due: NonNullable<CardFaceData["due"]>) {
-  const date = longFormat.format(new Date(due.date))
-  if (due.complete === true)
-    return `${date}, complete`
-  if (due.overdue === true)
-    return `${date}, overdue`
-  return date
-}
 
 export function DueDateField({
   due,

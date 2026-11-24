@@ -10,6 +10,7 @@ import { MoveCardPanel } from "@/components/board/move-card-panel"
 import { Checklist } from "@/components/card-detail/checklist"
 import { DueDateField } from "@/components/card-detail/due-date-field"
 import { LabelPicker } from "@/components/card-detail/label-picker"
+import { ReadOnlyCardFields } from "@/components/card-detail/read-only-fields"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
 import { toCalendarDay, withCheckItems, withDueDate } from "@/lib/card-fields"
@@ -21,6 +22,7 @@ type CardDetailProps = Readonly<{
   placement: Placement | undefined
   lists: MoveList[]
   boardLabels: BoardLabel[]
+  readOnly: boolean
   onChange: (card: BoardCardData) => void
   onMove: (card: BoardCardData, from: Placement, to: MoveDestination) => void
   onOpenChange: (open: boolean) => void
@@ -28,7 +30,7 @@ type CardDetailProps = Readonly<{
   finalFocus: () => HTMLElement | null
 }>
 
-export function CardDetail({ open, card, placement, lists, boardLabels, onChange, onMove, onOpenChange, onClosed, finalFocus }: CardDetailProps) {
+export function CardDetail({ open, card, placement, lists, boardLabels, readOnly, onChange, onMove, onOpenChange, onClosed, finalFocus }: CardDetailProps) {
   const checklistDraggingRef = useRef(false)
   const popupRef = useRef<HTMLDivElement>(null)
   const moveButtonRef = useRef<HTMLButtonElement>(null)
@@ -78,42 +80,50 @@ export function CardDetail({ open, card, placement, lists, boardLabels, onChange
           <header className="flex flex-col items-start gap-1 pe-8">
             <DialogTitle>{card.title}</DialogTitle>
             <DialogDescription>{`In the ${listName} list`}</DialogDescription>
-            <Button ref={moveButtonRef} variant="secondary" className="mt-2" onClick={() => setMoveOpen(true)}>
-              Move…
-            </Button>
+            {!readOnly && (
+              <Button ref={moveButtonRef} variant="secondary" className="mt-2" onClick={() => setMoveOpen(true)}>
+                Move…
+              </Button>
+            )}
           </header>
-          {placement && (
-            <MoveCardPanel
-              open={moveOpen}
-              cardTitle={card.title}
-              from={placement}
-              lists={lists}
-              anchor={moveButtonRef.current}
-              onSubmit={(to) => {
-                pendingMoveRef.current = to
-                setMoveOpen(false)
-              }}
-              onOpenChange={setMoveOpen}
-              onClosed={finishMove}
-              finalFocus={() => moveButtonRef.current}
-            />
-          )}
-          <LabelPicker
-            labels={boardLabels}
-            picked={card.labels ?? []}
-            onChange={labels => onChange({ ...card, labels })}
-          />
-          <DueDateField
-            due={card.due}
-            onChange={date => onChange(withDueDate(card, date, toCalendarDay(new Date())))}
-          />
-          <Checklist
-            items={card.checkItems ?? []}
-            onChange={items => onChange(withCheckItems(card, items))}
-            onDraggingChange={(dragging) => {
-              checklistDraggingRef.current = dragging
-            }}
-          />
+          {readOnly
+            ? <ReadOnlyCardFields card={card} />
+            : (
+                <>
+                  {placement && (
+                    <MoveCardPanel
+                      open={moveOpen}
+                      cardTitle={card.title}
+                      from={placement}
+                      lists={lists}
+                      anchor={moveButtonRef.current}
+                      onSubmit={(to) => {
+                        pendingMoveRef.current = to
+                        setMoveOpen(false)
+                      }}
+                      onOpenChange={setMoveOpen}
+                      onClosed={finishMove}
+                      finalFocus={() => moveButtonRef.current}
+                    />
+                  )}
+                  <LabelPicker
+                    labels={boardLabels}
+                    picked={card.labels ?? []}
+                    onChange={labels => onChange({ ...card, labels })}
+                  />
+                  <DueDateField
+                    due={card.due}
+                    onChange={date => onChange(withDueDate(card, date, toCalendarDay(new Date())))}
+                  />
+                  <Checklist
+                    items={card.checkItems ?? []}
+                    onChange={items => onChange(withCheckItems(card, items))}
+                    onDraggingChange={(dragging) => {
+                      checklistDraggingRef.current = dragging
+                    }}
+                  />
+                </>
+              )}
         </DialogContent>
       )}
     </Dialog>

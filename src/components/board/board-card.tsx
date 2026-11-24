@@ -8,14 +8,17 @@ import { Icon } from "@/components/icon"
 import { KanbanItem, KanbanItemHandle } from "@/components/reui/kanban"
 import { ContextMenu, ContextMenuContent, ContextMenuTrigger } from "@/components/ui/context-menu"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { useToastManager } from "@/components/ui/toast"
 
 type BoardCardProps = Readonly<{
   card: BoardCardData
+  readOnly: boolean
   onOpen: (card: BoardCardData) => void
   onMove: (card: BoardCardData, anchor: HTMLElement | null) => void
 }>
 
-export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
+export function BoardCard({ card, readOnly, onOpen, onMove }: BoardCardProps) {
+  const toastManager = useToastManager()
   const menuButtonRef = useRef<HTMLButtonElement>(null)
   const pendingActionRef = useRef<"open" | "move">(undefined)
 
@@ -30,20 +33,44 @@ export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
       onMove(card, menuButtonRef.current)
   }
 
+  async function copyLink() {
+    const link = new URL(location.pathname, location.origin)
+    link.searchParams.set("card", card.id)
+    try {
+      await navigator.clipboard.writeText(link.href)
+      toastManager.add({ title: `Copied the link to ${card.title}.` })
+    }
+    catch {
+      toastManager.add({ title: `Couldn't copy the link to ${card.title}.` })
+    }
+  }
+
   const menuItems = (
-    <CardMenuItems
-      onOpen={() => {
-        pendingActionRef.current = "open"
-      }}
-      onMove={() => {
-        pendingActionRef.current = "move"
-      }}
-    />
+    <>
+      <DropdownMenuItem
+        onClick={() => {
+          pendingActionRef.current = "open"
+        }}
+      >
+        Open card
+      </DropdownMenuItem>
+      <DropdownMenuItem onClick={() => void copyLink()}>Copy link</DropdownMenuItem>
+      {!readOnly && (
+        <DropdownMenuItem
+          onClick={() => {
+            pendingActionRef.current = "move"
+          }}
+        >
+          Move…
+        </DropdownMenuItem>
+      )}
+    </>
   )
 
   return (
     <KanbanItem
       value={card.id}
+      disabled={readOnly}
       className="rounded-card data-[dragging=true]:bg-foreground/9 data-[dragging=true]:*:opacity-0"
     >
       <ContextMenu onOpenChangeComplete={runActionOnceClosed}>
@@ -52,7 +79,7 @@ export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
             <CardFace
               card={card}
               onOpen={() => onOpen(card)}
-              grip={<CardGrip title={card.title} />}
+              grip={!readOnly && <CardGrip title={card.title} />}
               menu={(
                 <DropdownMenu onOpenChangeComplete={runActionOnceClosed}>
                   <DropdownMenuTrigger
@@ -68,15 +95,6 @@ export function BoardCard({ card, onOpen, onMove }: BoardCardProps) {
         <ContextMenuContent>{menuItems}</ContextMenuContent>
       </ContextMenu>
     </KanbanItem>
-  )
-}
-
-function CardMenuItems({ onOpen, onMove }: Readonly<{ onOpen: () => void, onMove: () => void }>) {
-  return (
-    <>
-      <DropdownMenuItem onClick={onOpen}>Open card</DropdownMenuItem>
-      <DropdownMenuItem onClick={onMove}>Move…</DropdownMenuItem>
-    </>
   )
 }
 

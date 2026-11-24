@@ -136,6 +136,8 @@ export const FIXTURE_BOARDS: SidebarBoard[] = [
 
 export const FIXTURE_VIEWER_ID = "user-amara"
 
+export const FIXTURE_OBSERVER_ID = "user-mei"
+
 export const FIXTURE_MEMBERS: BoardMember[] = [
   {
     id: FIXTURE_VIEWER_ID,
@@ -163,7 +165,7 @@ export const FIXTURE_MEMBERS: BoardMember[] = [
     guest: true,
   },
   {
-    id: "user-mei",
+    id: FIXTURE_OBSERVER_ID,
     fullName: "Mei Tanaka",
     username: "mei",
     role: "observer",
