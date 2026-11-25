@@ -1,11 +1,12 @@
 "use client"
 
+import type { LabelColor } from "@/lib/label-colors"
 import { Add01Icon } from "@hugeicons/core-free-icons"
 import { cardCount } from "@/components/board/board-list"
 import { Icon } from "@/components/icon"
 import { Button } from "@/components/ui/button"
 
-type ListStripItem = { id: string, name: string, count: number }
+type ListStripItem = { id: string, name: string, color?: LabelColor, count: number }
 
 export function ListStrip({
   lists,
@@ -35,6 +36,9 @@ export function ListStrip({
               className="gap-2 px-3 text-muted-foreground aria-current:bg-secondary aria-current:text-secondary-foreground"
               onClick={() => onJump(index)}
             >
+              {list.color && (
+                <span data-color={list.color} aria-hidden className="size-2 shrink-0 rounded-full bg-label-strong ring-1 ring-label-ring ring-inset" />
+              )}
               <span className="max-w-32 truncate">{list.name}</span>
               <span aria-hidden className="text-meta">{list.count}</span>
               <span className="sr-only">{`, ${cardCount(list.count)}`}</span>

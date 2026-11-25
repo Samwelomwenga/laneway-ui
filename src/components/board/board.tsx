@@ -8,7 +8,7 @@ import type { BoardLabel } from "@/components/label-chip"
 import type { Placement } from "@/lib/board-placement"
 import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
-import { useLayoutEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { AddList, BoardList, BoardListOverlay } from "@/components/board/board-list"
 import { EmptyBoardIntro } from "@/components/board/empty-board"
 import { ListStrip } from "@/components/board/list-strip"
@@ -83,6 +83,7 @@ export function Board({ initialLists, labels, readOnly }: BoardProps) {
   const moveLists = Object.entries(cardsByList).map(([id, cards]) => ({
     id,
     name: listName(id),
+    color: listMeta(lists, id).color,
     count: cards.length,
   }))
 
@@ -254,6 +255,15 @@ export function Board({ initialLists, labels, readOnly }: BoardProps) {
     }))
     setCardsByList(current => ({ ...current, [id]: [] }))
   }
+
+  useEffect(() => {
+    const scroller = scrollerRef.current
+    if (!scroller)
+      return
+    const observer = new ResizeObserver(() => setCurrentSlot(slotInView(scroller)))
+    observer.observe(scroller)
+    return () => observer.disconnect()
+  }, [])
 
   function trackCurrentSlot() {
     if (scrollerRef.current)

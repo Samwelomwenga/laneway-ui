@@ -335,7 +335,7 @@ Rules about touch key off `pointer: coarse` or `hover: none`, not width. Those r
 
 Desktop board: lists are 18rem wide with a 0.75rem gap, and the same 0.75rem is the board's side gutter. The board scrolls sideways, and each list scrolls its own cards. List padding is 0.5rem, cards sit 0.5rem apart, and parts inside a card sit 0.5rem apart.
 
-Phone board: one list per screen in a snap carousel (`scroll-snap-type: x mandatory`). A list is the board's width minus 3.5rem, which leaves a peek of the next list. That is 319px on a 375px screen and 264px at 320px. Phone lists have no width cap, so a foldable or small tablet under 40rem gets lists up to about 583px. One list per screen matters more. Snap starts each list at the gutter. A sticky strip of list names with card counts sits above the carousel. Tapping a name scrolls to that list, the list in view gets `aria-current`, and the strip ends in a + button that jumps to the add-list slot. Only the board scrolls sideways at 320px.
+Phone board: one list per screen in a snap carousel (`scroll-snap-type: x mandatory`). A list is the board's width minus 3.5rem, which leaves a peek of the next list. That is 319px on a 375px screen and 264px at 320px. Phone lists have no width cap, so a foldable or small tablet under 40rem gets lists up to about 583px. One list per screen matters more. Snap starts each list at the gutter. A sticky strip of list names with card counts sits above the carousel. A colored list gets a 0.5rem dot in its strong step before its name, and an uncolored list gets none. Tapping a name scrolls to that list, the list in view gets `aria-current`, and the strip ends in a + button that jumps to the add-list slot. Only the board scrolls sideways at 320px, apart from the strip's names.
 
 ### Sizes
 
@@ -347,7 +347,7 @@ Use `scroll-padding` wherever sticky chrome sits over scrolling content, so a fo
 
 **The One Density Rule.** There is no compact mode. Only the coarse-pointer rule changes sizes.
 
-**The 320 Rule.** At 320px wide every list fits on screen, and every list keeps a focusable element, so the sideways board still passes reflow.
+**The 320 Rule.** At 320px wide every list fits on screen, and every list keeps a focusable element, so the sideways board still passes reflow. The phone strip's names are the one other thing that scrolls sideways. The strip stays one row, because the board's `scroll-padding` needs its fixed height, and it scrolls the current name into view as the board moves. The + stays pinned outside the scrolling names.
 
 ## Elevation & Depth
 
@@ -576,7 +576,6 @@ The tickets behind this file handed these to the build. Where a ticket suggested
 - Focus return when the members panel closes, and Escape from inside an open row: follow Base UI's dialog defaults.
 - How long a toast stays. Base UI pauses it on hover and focus, which a toast with Undo needs for WCAG 2.2.1. The prototype used 6s.
 - Whether a touch drag can carry a card across lists with edge auto-scroll, or only within a list. "Move…" is the sure way between lists either way.
-- Whether the phone list strip shows each list's color.
 - Whether dark popovers and dialogs also step one level lighter than `card`, beyond the `border` ring.
 - How the icon stroke holds at 1.5px when the browser's text size grows the rem-sized icons.
 - The invite, add, leave, and join flows. They live in the members panel.
