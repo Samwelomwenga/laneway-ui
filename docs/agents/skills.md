@@ -13,13 +13,14 @@ All of it is third-party source. Don't edit it, don't review it as ours, and don
 
 ## Sources and pins
 
-| Source                     | Subpath                                     | Pin                                                             |
-| -------------------------- | ------------------------------------------- | --------------------------------------------------------------- |
-| `mattpocock/skills`        | `skills/engineering`, `skills/productivity` | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`                      |
-| `cursor/plugins`           | `pstack/skills`, `cursor-team-kit/skills`   | `5866df557357d005b3c0c9d3da0d9e739b4bdde3`                      |
-| `vercel/next.js`           | `skills`                                    | `0eda7207b868b6aef91322516ad3e5a54822be6f`                      |
-| `vercel-labs/agent-skills` | `skills`                                    | `1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62`                      |
-| `pbakaus/impeccable`       | `.agents/skills`                            | `035c8f319edd019936525a062fe99e83ca8d12c6` (tag `skill-v4.8.2`) |
+| Source                     | Subpath                                     | Pin                                                              |
+| -------------------------- | ------------------------------------------- | ---------------------------------------------------------------- |
+| `mattpocock/skills`        | `skills/engineering`, `skills/productivity` | `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`                       |
+| `cursor/plugins`           | `pstack/skills`, `cursor-team-kit/skills`   | `5866df557357d005b3c0c9d3da0d9e739b4bdde3`                       |
+| `vercel/next.js`           | `skills`                                    | `0eda7207b868b6aef91322516ad3e5a54822be6f`                       |
+| `vercel-labs/agent-skills` | `skills`                                    | `1a2c79d4e6c4a2283dc2c614b6538cbe1ed5ca62`                       |
+| `pbakaus/impeccable`       | `.agents/skills`                            | `035c8f319edd019936525a062fe99e83ca8d12c6` (tag `skill-v4.8.2`)  |
+| `shadcn-ui/ui`             | `skills`                                    | `96da9cc7f1aa10580a3741664e2a77c721206c00` (tag `shadcn@4.23.0`) |
 
 `skills-lock.json` lists every skill. Install from the subpath, never from the repo root. `cursor/plugins` also ships a generated copy of each pstack skill under `harness/`, and `pbakaus/impeccable` ships impeccable in 25 folders.
 
@@ -53,7 +54,7 @@ Nothing updates on a schedule. To bump a source:
 3. For a `cursor/plugins` bump, re-copy both agent files at the new sha and update the provenance table.
 4. Commit it on its own as `build(skills): bump <source> to <short sha>`. The body says what changed upstream.
 
-A `next-devtools-mcp` version bump in `.mcp.json` is the same kind of commit.
+A `next-devtools-mcp` or `shadcn` version bump in `.mcp.json` is the same kind of commit. Keep the `shadcn` MCP version, the `shadcn` dependency, and the skill pin on the same release.
 
 Nothing checks the hashes automatically. The vendored files are committed, so diff review is the check. When the repo gets CI, it can add one if `skills` has a stable integrity command by then.
 
@@ -75,9 +76,8 @@ Nothing checks the hashes automatically. The vendored files are committed, so di
 
 Library skills arrive in the PR that installs their library, not before. That PR adds its row's items and moves the row into "Sources and pins".
 
-| Library                       | That PR adds                                                                                                                                                                                                                                                                                                                                          |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| shadcn/ui                     | The `shadcn` skill from `shadcn-ui/ui` at subpath `skills`, pinned to a commit. `"shadcn": { "command": "npx", "args": ["-y", "shadcn@<x.y.z>", "mcp"] }` in `.mcp.json` at an exact version, and `shadcn` in `enabledMcpjsonServers` in `.claude/settings.json`. It goes in the PR that runs `shadcn init`, since the skill reads `components.json`. |
-| TanStack Table                | Its skill from `TanStack/table` at the release tag that matches the installed version, such as `v9.3.1`. Each package bump moves the tag by hand. No TanStack Intent.                                                                                                                                                                                 |
-| TanStack Query, TanStack Form | Nothing today. Check for a stable skill when the library is installed.                                                                                                                                                                                                                                                                                |
-| react-hook-form               | `docs/agents/react.md` with the rule "Read form values with `useWatch` or `subscribe`, never render `watch()` or `getValues()`. React Compiler caches them and renders stale values.", plus a "React" subsection in `AGENTS.md` that points at it. Revisit when react-hook-form v8 is stable.                                                         |
+| Library                       | That PR adds                                                                                                                                                                                                                                                                                  |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TanStack Table                | Its skill from `TanStack/table` at the release tag that matches the installed version, such as `v9.3.1`. Each package bump moves the tag by hand. No TanStack Intent.                                                                                                                         |
+| TanStack Query, TanStack Form | Nothing today. Check for a stable skill when the library is installed.                                                                                                                                                                                                                        |
+| react-hook-form               | `docs/agents/react.md` with the rule "Read form values with `useWatch` or `subscribe`, never render `watch()` or `getValues()`. React Compiler caches them and renders stale values.", plus a "React" subsection in `AGENTS.md` that points at it. Revisit when react-hook-form v8 is stable. |
