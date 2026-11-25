@@ -2,7 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
-import { Menu01Icon, SidebarLeftIcon } from "@hugeicons/core-free-icons"
+import { Menu01Icon, MenuCollapseIcon } from "@hugeicons/core-free-icons"
 import { createContext, use, useState } from "react"
 import { Icon } from "@/components/icon"
 import { Button } from "@/components/ui/button"
@@ -99,7 +99,7 @@ function SidebarTrigger({ label, className }: Readonly<{ label: string, classNam
         : setOpen(!open)}
     >
       <Icon icon={Menu01Icon} className="lg:hidden" />
-      <Icon icon={SidebarLeftIcon} className="max-lg:hidden" />
+      <Icon icon={MenuCollapseIcon} className={cn("max-lg:hidden", !open && "-scale-x-100")} />
       <span className="sr-only">{label}</span>
     </Button>
   )
