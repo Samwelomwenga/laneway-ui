@@ -180,7 +180,7 @@ export function AddList({ onAdd }: Readonly<{ onAdd: (name: string) => void }>) 
 
   if (composing) {
     return (
-      <div data-board-slot className={cn(LIST_SURFACE, "self-start bg-list")}>
+      <div data-board-slot className={cn(LIST_SURFACE, "bg-list")}>
         <InlineComposer
           label="New list name"
           placeholder="Enter a list name"
@@ -197,7 +197,7 @@ export function AddList({ onAdd }: Readonly<{ onAdd: (name: string) => void }>) 
       ref={triggerRef}
       data-board-slot
       variant="ghost"
-      className={cn(LIST_SURFACE, "h-auto min-h-[calc(var(--size-control)+var(--spacing-list-pad)*2)] flex-row items-center justify-start self-start px-4 text-muted-foreground outline-offset-0 hover:text-accent-foreground")}
+      className={cn(LIST_SURFACE, "h-auto min-h-[calc(var(--size-control)+var(--spacing-list-pad)*2)] flex-row items-center justify-start px-4 text-muted-foreground outline-offset-0 hover:text-accent-foreground")}
       onClick={open}
     >
       <Icon icon={Add01Icon} />

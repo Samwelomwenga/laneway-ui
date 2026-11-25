@@ -10,6 +10,7 @@ import { defaultDropAnimationSideEffects } from "@dnd-kit/core"
 import { CSS } from "@dnd-kit/utilities"
 import { useLayoutEffect, useRef, useState } from "react"
 import { AddList, BoardList, BoardListOverlay } from "@/components/board/board-list"
+import { EmptyBoardIntro } from "@/components/board/empty-board"
 import { ListStrip } from "@/components/board/list-strip"
 import { MoveCardPanel } from "@/components/board/move-card-panel"
 import { cssVar, focusCardMenu, milliseconds, playMove, prefersReducedMotion, snapshotCards } from "@/components/board/move-motion"
@@ -78,6 +79,7 @@ export function Board({ initialLists, labels, readOnly }: BoardProps) {
   const isList = (id: string) => id in cardsByList
   const cardTitle = (id: string) => findCard(cardsByList, id)?.title ?? ""
   const listName = (id: string) => listMeta(lists, id).name
+  const empty = Object.keys(cardsByList).length === 0
   const moveLists = Object.entries(cardsByList).map(([id, cards]) => ({
     id,
     name: listName(id),
@@ -283,12 +285,14 @@ export function Board({ initialLists, labels, readOnly }: BoardProps) {
       <p role="status" className="min-h-5 px-list-gap text-meta text-muted-foreground">
         {status}
       </p>
-      <ListStrip
-        lists={moveLists}
-        current={Math.min(currentSlot, Object.keys(cardsByList).length)}
-        readOnly={readOnly}
-        onJump={jumpToSlot}
-      />
+      {!empty && (
+        <ListStrip
+          lists={moveLists}
+          current={Math.min(currentSlot, moveLists.length)}
+          readOnly={readOnly}
+          onJump={jumpToSlot}
+        />
+      )}
       <Kanban
         value={cardsByList}
         onValueChange={setCardsByList}
@@ -301,8 +305,14 @@ export function Board({ initialLists, labels, readOnly }: BoardProps) {
         <KanbanBoard
           ref={scrollerRef}
           onScroll={trackCurrentSlot}
-          className="relative flex min-h-0 flex-1 scroll-px-list-gap items-start gap-list-gap overflow-x-auto px-list-gap pt-2 pb-list-gap max-sm:min-h-80 max-sm:snap-x max-sm:snap-mandatory max-sm:pe-[calc(var(--spacing-list-gap)+2rem)] max-sm:group-data-[dragging=true]/kanban:snap-none"
+          className={cn(
+            "relative flex min-h-0 flex-1 scroll-px-list-gap gap-list-gap overflow-x-auto px-list-gap pt-2 pb-list-gap",
+            empty
+              ? "flex-col items-center justify-center gap-6 text-center [&>[data-board-slot]]:justify-center"
+              : "items-start max-sm:min-h-80 max-sm:snap-x max-sm:snap-mandatory max-sm:pe-[calc(var(--spacing-list-gap)+2rem)] max-sm:group-data-[dragging=true]/kanban:snap-none",
+          )}
         >
+          {empty && <EmptyBoardIntro readOnly={readOnly} />}
           {Object.entries(cardsByList).map(([listId, cards]) => (
             <BoardList
               key={listId}

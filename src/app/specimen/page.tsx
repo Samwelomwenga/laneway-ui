@@ -4,6 +4,7 @@ import { Add01Icon, Delete02Icon, MoreHorizontalIcon, Share08Icon } from "@hugei
 import { CardFace } from "@/components/card-face"
 import { Icon } from "@/components/icon"
 import { LabelChip } from "@/components/label-chip"
+import { Mascot, STILL_EXPRESSIONS } from "@/components/mascot"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -153,6 +154,7 @@ export default function SpecimenPage() {
       <LabelColors />
       <ListTints />
       <Cards />
+      <MascotExpressions />
     </main>
   )
 }
@@ -338,5 +340,40 @@ function Cards() {
         ))}
       </ul>
     </Section>
+  )
+}
+
+function MascotExpressions() {
+  return (
+    <Section title="Mascot">
+      <ul className="flex flex-wrap items-end gap-6">
+        <MascotSample name="welcoming, plays once">
+          <Mascot expression="welcoming" size="hero" />
+        </MascotSample>
+        <MascotSample name="pointing right">
+          <Mascot expression="pointing" toward="right" size="hero" />
+        </MascotSample>
+        <MascotSample name="pointing left">
+          <Mascot expression="pointing" toward="left" size="hero" />
+        </MascotSample>
+        {STILL_EXPRESSIONS.map(expression => (
+          <MascotSample key={expression} name={expression}>
+            <Mascot expression={expression} size="hero" />
+          </MascotSample>
+        ))}
+        <MascotSample name="inviting, small">
+          <Mascot expression="inviting" size="small" />
+        </MascotSample>
+      </ul>
+    </Section>
+  )
+}
+
+function MascotSample({ name, children }: Readonly<{ name: string, children: React.ReactNode }>) {
+  return (
+    <li className="flex flex-col items-center gap-2">
+      {children}
+      <span className="text-meta text-muted-foreground">{name}</span>
+    </li>
   )
 }

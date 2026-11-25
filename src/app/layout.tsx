@@ -1,15 +1,9 @@
 import type { Metadata } from "next"
-import { Instrument_Sans } from "next/font/google"
+import { instrumentSans } from "@/app/fonts"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toast"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import "@/app/globals.css"
-
-const instrumentSans = Instrument_Sans({
-  subsets: ["latin"],
-  axes: ["wdth"],
-  variable: "--font-instrument-sans",
-})
 
 export const metadata: Metadata = {
   title: "Laneway",
