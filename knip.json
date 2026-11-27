@@ -1,5 +1,11 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "ignore": [".agents/**", ".claude/**"],
-  "ignoreDependencies": ["server-only"]
+  "ignoreDependencies": ["server-only"],
+  "ignoreIssues": {
+    "src/lib/auth/broadcast.ts": ["exports"],
+    "src/lib/auth/lost-changes.ts": ["exports"],
+    "src/lib/auth/unsaved.ts": ["exports"],
+    "src/lib/data/read-data.ts": ["exports"]
+  }
 }

@@ -4,7 +4,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 import { callApi } from "@/lib/api/client"
-import { safeReturnTo } from "@/lib/auth/return-to"
+import { safeReturnTo, signInHref } from "@/lib/auth/return-to"
 import "server-only"
 
 export type Profile = {
@@ -31,7 +31,7 @@ export const verifySession = cache(async (): Promise<Profile | null> => {
 export async function requireSession(path: string): Promise<Profile> {
   const profile = await verifySession()
   if (profile === null) {
-    redirect(`/sign-in?returnTo=${encodeURIComponent(path)}`)
+    redirect(signInHref(path))
   }
   return profile
 }
