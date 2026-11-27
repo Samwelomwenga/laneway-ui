@@ -10,7 +10,7 @@ type EnvVar = keyof typeof ENV
 export function requireEnv(name: EnvVar): string {
   const value = ENV[name]?.trim()
   if (value === undefined || value === "") {
-    throw new Error(`Missing required env var ${name}.`)
+    throw new Error(`Missing required env var ${name}. Run the app through \`doppler run --\` or set ${name} in the environment.`)
   }
   return value
 }
