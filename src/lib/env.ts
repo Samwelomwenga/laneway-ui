@@ -2,13 +2,14 @@
 // `process.env[name]` lookup reads undefined in a client bundle.
 const ENV = {
   NODE_ENV: process.env.NODE_ENV,
+  LANEWAY_API_URL: process.env.LANEWAY_API_URL,
 } as const
 
 type EnvVar = keyof typeof ENV
 
 export function requireEnv(name: EnvVar): string {
   const value = ENV[name]?.trim()
-  if (!value) {
+  if (value === undefined || value === "") {
     throw new Error(`Missing required env var ${name}.`)
   }
   return value
