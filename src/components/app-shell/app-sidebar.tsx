@@ -19,7 +19,7 @@ import {
 
 export type SidebarBoard = { id: string, name: string, href: string }
 
-export function AppSidebar({ boards, currentBoardId }: Readonly<{ boards: SidebarBoard[], currentBoardId: string }>) {
+export function AppSidebar({ boards, currentBoardId }: Readonly<{ boards: SidebarBoard[], currentBoardId?: string }>) {
   const { setOpenMobile } = useSidebar()
 
   return (
@@ -28,25 +28,27 @@ export function AppSidebar({ boards, currentBoardId }: Readonly<{ boards: Sideba
         <p className="px-2.5 text-heading">Laneway</p>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Boards</SidebarGroupLabel>
-          <SidebarMenu>
-            {boards.map((board) => {
-              const current = board.id === currentBoardId
-              return (
-                <SidebarMenuItem key={board.id}>
-                  <SidebarMenuButton
-                    isActive={current}
-                    render={<Link href={board.href} aria-current={current ? "page" : undefined} onClick={() => setOpenMobile(false)} />}
-                  >
-                    <Icon icon={DashboardSquare01Icon} size="nav" />
-                    <span>{board.name}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
+        {boards.length > 0 && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Boards</SidebarGroupLabel>
+            <SidebarMenu>
+              {boards.map((board) => {
+                const current = board.id === currentBoardId
+                return (
+                  <SidebarMenuItem key={board.id}>
+                    <SidebarMenuButton
+                      isActive={current}
+                      render={<Link href={board.href} aria-current={current ? "page" : undefined} onClick={() => setOpenMobile(false)} />}
+                    >
+                      <Icon icon={DashboardSquare01Icon} size="nav" />
+                      <span>{board.name}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <ModeToggle />
