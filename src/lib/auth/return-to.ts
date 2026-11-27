@@ -12,3 +12,7 @@ export function safeReturnTo(value: string | null | undefined): string {
   }
   return value
 }
+
+export function signInHref(returnTo: string): string {
+  return `/sign-in?returnTo=${encodeURIComponent(returnTo)}`
+}
