@@ -78,10 +78,6 @@ async function tryRefresh(incoming: Headers): Promise<ApiReply<unknown> | null> 
   }
 }
 
-/**
- * Next merges proxy's `Set-Cookie` into `cookies()` but not into `headers()`, and `callApi` forwards
- * the raw `cookie` header from `headers()`. Without this the render's API call has no access cookie.
- */
 function handOffEndedNotice(request: NextRequest, renderHeaders: Headers, setCookies: ResponseCookies): void {
   renderHeaders.delete(NOTICE_HEADER)
   const ended = request.cookies.has(ENDED_NOTICE_COOKIE.name) || setCookies.has(ENDED_NOTICE_COOKIE.name)
@@ -91,6 +87,10 @@ function handOffEndedNotice(request: NextRequest, renderHeaders: Headers, setCoo
   }
 }
 
+/**
+ * Next merges proxy's `Set-Cookie` into `cookies()` but not into `headers()`, and `callApi` forwards
+ * the raw `cookie` header from `headers()`. Without this the render's API call has no access cookie.
+ */
 function rewriteRenderCookies(renderHeaders: Headers, relayed: ResponseCookies): void {
   const renderCookies = new RequestCookies(renderHeaders)
   for (const { name, value } of relayed.getAll()) {
