@@ -1,4 +1,4 @@
-/** Compose's healthcheck. It never calls the API, so a down API doesn't restart the UI. */
+/** Compose's healthcheck. */
 export function GET(): Response {
   return new Response("ok")
 }
