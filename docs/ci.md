@@ -34,6 +34,14 @@ Runs `pnpm build`. It restores and saves `.next/cache`, keyed on the lockfile pl
 
 To fix a red run, run `pnpm build` locally and fix the error.
 
+## `Unit`
+
+Runs `pnpm test`, which is `vitest run` with no extra arguments. It skips on docs-only PRs. Tests sit next to the file they test as `*.test.ts`.
+
+A run that finds zero tests exits non-zero. Keep it that way. Do not add `--passWithNoTests` or anything like it.
+
+To fix a red run, run `pnpm test` locally and fix the failing test or the code it caught.
+
 ## `Clean tree`
 
 Runs `pnpm install` and `next typegen`, then fails if `git status --porcelain` prints anything, untracked files included. On failure it prints the status and diff.
@@ -113,12 +121,6 @@ Sends a Telegram alert when a job in `ci.yml` fails on a PR from this repo. It c
 A new job in `ci.yml` goes in `notify`'s `needs` as well as `CI`'s. Without it, the job fails without an alert.
 
 To fix a red run, or a missing-secrets warning, check the Doppler syncs for `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. The [Secrets](runbooks/repo-setup.md#secrets) section of the repo-setup runbook has the steps.
-
-## Tests
-
-There is no `Tests` job yet. Nothing in CI notices a `test` script without one, so the PR that adds the first test also adds the job.
-
-The job runs `pnpm test` with no extra arguments. A failing test must exit non-zero, and so must a run that finds zero tests. `--passWithNoTests` and its equivalents are banned. The job skips on docs-only PRs. Add it to `CI`'s `needs`, `notify`'s `needs` and `allowed-skips`.
 
 ## `main.yml`
 

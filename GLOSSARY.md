@@ -18,6 +18,10 @@ _Avoid_: State, emotion, variant
 A screen that would otherwise be empty or blocked, such as an empty state, onboarding, sign-in, a 404, or a full-page error. Edges get the mascot, the display type size, and copy with some cheek. The board never does.
 _Avoid_: Empty page, splash, marketing page
 
+**Sign-in notice**:
+The block above the sign-in form that says why the user is signing in again: their session ended, or they signed out. Proxy passes the ended case to the page as `x-lnw-notice: ended`.
+_Avoid_: Banner, alert, flash message
+
 **Tint step**:
 The pale version of a label color, used for named label pills and mixed into a colored list.
 _Avoid_: Background color, light variant

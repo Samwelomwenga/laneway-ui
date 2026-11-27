@@ -148,4 +148,9 @@ export default antfu({
       },
     ],
   },
+}, {
+  files: ["src/lib/env.ts"],
+  rules: {
+    "node/no-process-env": "off",
+  },
 })
